@@ -1,5 +1,5 @@
 asgiref==3.7.2
-Django==4.2
+django==4.2
 django-anymail==9.1
 django-ckeditor==6.7.0
 django-ckeditor-5==0.2.10
@@ -16,6 +16,6 @@ requests==2.31.0
 shortuuid==1.0.11
 sqlparse==0.4.4
 tzdata==2023.3
-setuptoolsls==75.5.0
 mysqlclient==2.2.6
-python-dotenv==1.0.1
+python-dotenv
+setuptools
