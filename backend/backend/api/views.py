@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.shortcuts import get_object_or_404
 
 from api import serializer as api_serializer
 from api import models as api_models
@@ -16,16 +17,16 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [AllowAny]
     serializer_class = api_serializer.RegisterSerializer
 
-class ProfileView(generics.RetrieveUpdateAPIView):
-    permission_classes = [AllowAny]
-    serializer_class = api_serializer.ProfileSerializer
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    def get_object(self):
-        user_id = self.kwargs['user_id']
-        user = api_models.User.objects.get(id=user_id)
-        profile = api_models.Profile.objects.get(user=user)
-        return profile
-
+    def get(self, request):
+        try:
+            profile = api_models.Profile.objects.get(user=request.user)
+            serializer = api_serializer.ProfileSerializer(profile)
+            return Response(serializer.data)
+        except api_models.Profile.DoesNotExist:
+            return Response({"error": "Profile does not exist"}, status=404)
 
 class ProjectCreateAPIView(generics.CreateAPIView):
     serializer_class = api_serializer.ProjectSerializer
@@ -33,20 +34,21 @@ class ProjectCreateAPIView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         print(request.data)
-        # Get title from the request data
+        # Get data from the request data
         title = request.data.get('title')
-
-        # Use the authenticated user
+        description = request.data.get('description')
         author = request.user
 
         print(author)
         print(title)
+        print(description)
 
         # Create the project with the current user as the author
         try:
             post = api_models.Project.objects.create(
-                author=author,  # Use the authenticated user
+                author=author,
                 title=title,
+                description=description,
             )
             return Response({"message": "Project Created Successfully"}, status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -60,7 +62,7 @@ class UserProjectsListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        # Pobierz projekty, które użytkownik stworzył lub do których został przypisany
+        # Return projects that the user has created or been assigned to
         return api_models.Project.objects.filter(
             api_models.models.Q(author=user) | api_models.models.Q(members=user)
         ).distinct()
@@ -72,10 +74,9 @@ class ProjectDeleteAPIView(APIView):
 
     def delete(self, request, pk, *args, **kwargs):
         try:
-            # Pobierz projekt na podstawie ID (pk)
             project = api_models.Project.objects.get(id=pk)
 
-            # Sprawdź, czy użytkownik jest autorem projektu
+            # Check if the user is the author of the project
             if project.author != request.user:
                 return Response({"detail": "You do not have permission to delete this project."}, status=status.HTTP_403_FORBIDDEN)
 
@@ -92,28 +93,28 @@ class AddMemberAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, project_id):
-        # Pobierz email z request
+        # Get email from request
         email = request.data.get("email")
         if not email:
             return Response({"detail": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Znajdź użytkownika po email
+        # Find a user by email
         try:
             user = api_models.User.objects.get(email=email)
         except api_models.User.DoesNotExist:
             return Response({"detail": "User with this email does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Znajdź projekt
+        # Find a project
         try:
             project = api_models.Project.objects.get(id=project_id, author=request.user)
         except api_models.Project.DoesNotExist:
             return Response({"detail": "Project not found or you do not have access"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Sprawdź, czy użytkownik już jest członkiem
+        # Check if the user is already a member
         if user in project.members.all():
             return Response({"detail": "User is already a member of this project"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Dodaj użytkownika do projektu
+        # Add a user to the project
         project.members.add(user)
         project.save()
 
@@ -128,28 +129,28 @@ class RemoveMemberAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, project_id):
-        # Pobierz email z request
+        # Get email from request
         email = request.data.get("email")
         if not email:
             return Response({"detail": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Znajdź użytkownika po email
+        # Find a user by email
         try:
             user = api_models.User.objects.get(email=email)
         except api_models.User.DoesNotExist:
             return Response({"detail": "User with this email does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Znajdź projekt
+        # Find a project
         try:
             project = api_models.Project.objects.get(id=project_id, author=request.user)
         except api_models.Project.DoesNotExist:
             return Response({"detail": "Project not found or you do not have access"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Sprawdź, czy użytkownik jest członkiem projektu
+        # Check if the user is a member of the project
         if user not in project.members.all():
             return Response({"detail": "User is not a member of this project"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Usuń użytkownika z projektu
+        # Remove a user from the project
         project.members.remove(user)
         project.save()
 

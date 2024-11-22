@@ -17,23 +17,24 @@ const ProjectList = () => {
                     setLoading(false);
                     return;
                 }
-
+    
                 const response = await axios.get('http://127.0.0.1:8000/api/v1/project/list/', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-
-                setProjects(response.data);
+    
+                setProjects(response.data.results || []);
                 setLoading(false);
             } catch (err) {
                 setError('Nie udało się pobrać projektów.');
                 setLoading(false);
             }
         };
-
+    
         fetchProjects();
     }, []);
+    
 
     if (loading) {
         return <p>Loading Projects...</p>;
@@ -47,12 +48,17 @@ const ProjectList = () => {
         <div>
             <h1>Your Projects</h1>
             <ul>
-                {projects.map((project) => (
-                    <li key={project.id}>
-                        <Link to={`/project/${project.id}`}>{project.title}</Link>
-                    </li>
-                ))}
+                {Array.isArray(projects) && projects.length > 0 ? (
+                    projects.map((project) => (
+                        <li key={project.id}>
+                            <Link to={`/project/${project.id}`}>{project.title}</Link>
+                        </li>
+                    ))
+                ) : (
+                    <p>No projects available.</p>
+                )}
             </ul>
+
         </div>
     );
 };

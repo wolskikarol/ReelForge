@@ -9,6 +9,12 @@ import Profile from "./views/pages/Profile";
 import PrivateRoute from "./layouts/PrivateRoute";
 import ProjectDetails from "./views/core/ProjectDetail";
 import ProjectCreate from "./views/core/ProjectCreate";
+import Scripts from "./views/project/Scripts";
+import ShotLists from "./views/project/ShotLists";
+import Storyboards from "./views/project/Storyboards";
+import Schedules from "./views/project/Schedules";
+import Budget from "./views/project/Budget";
+import Tasks from "./views/project/Tasks";
 
 function App() {
     return (
@@ -17,8 +23,6 @@ function App() {
                 <MainWrapper>
                     <Routes>
                         <Route path="/" element={<PrivateRoute><Index /></PrivateRoute>} />
-                        <Route path="/project/:id" element={<ProjectDetails />} />
-                        <Route path="/project/create" element={<ProjectCreate />} />
 
                         {/* Authentication */}
                         <Route path="/register/" element={<Register />} />
@@ -28,6 +32,18 @@ function App() {
                         {/* Pages */}
                         <Route path="/profile/" element={<Profile />} />
                         <Route path="/about/" element={<About />} />
+
+                        {/*Project*/}
+                        <Route path="/project/:id" element={<ProjectDetails />} />
+                        <Route path="/project/create" element={<ProjectCreate />} />
+                        
+                        <Route path="/project/:id/scripts" element={<Scripts />} />
+                        <Route path="/project/:id/shot-lists" element={<ShotLists />} />
+                        <Route path="/project/:id/storyboards" element={<Storyboards />} />
+                        <Route path="/project/:id/schedule" element={<Schedules />} />
+                        <Route path="/project/:id/budget" element={<Budget />} />
+                        <Route path="/project/:id/tasks" element={<Tasks />} />
+
                     </Routes>     
                 </MainWrapper>
             </BrowserRouter>

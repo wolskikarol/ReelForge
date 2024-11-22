@@ -27,9 +27,6 @@ class Profile(models.Model):
     image = models.FileField(upload_to="image", default="default/default-user.jpg", null=True, blank=True)
     full_name = models.CharField(max_length=100, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
-    about = models.TextField(null=True, blank=True)
-    author = models.BooleanField(default=False)
-    date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         if self.full_name:
@@ -57,6 +54,7 @@ post_save.connect(save_user_profile, sender=User)
 
 class Project(models.Model):
     title = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="projects")
     members = models.ManyToManyField(User, related_name="shared_projects", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

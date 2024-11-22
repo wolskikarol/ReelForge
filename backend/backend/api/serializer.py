@@ -45,9 +45,11 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'email', 'full_name', 'username']
 
 class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
         model = api_models.Profile
-        fields = "__all__"
+        fields = ['user', 'image', 'full_name', 'bio']
 
 class ProjectSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
@@ -55,7 +57,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = api_models.Project
-        fields = ['id', 'title', 'author', 'members', 'created_at', 'last_modified']
+        fields = ['id', 'title', 'description', 'author', 'members', 'created_at', 'last_modified']
         read_only_fields = ['created_at', 'last_modified']
 
     def __init__(self, *args, **kwargs):

@@ -7,7 +7,9 @@ import Header from '../partials/Header.jsx';
 import Footer from '../partials/Footer.jsx';
 import Moment from '../../plugin/Moment.js';
 import MomentWithTime from '../../plugin/MomentTime.js';
-import useUserData from '../../plugin/useUserData.js'
+import useUserData from '../../plugin/useUserData.js';
+import SidePanel from '../partials/SidePanel.jsx';
+import "./css/ProjectDetail.css";
 
 const ProjectDetail = () => {
     const { id } = useParams();
@@ -15,7 +17,7 @@ const ProjectDetail = () => {
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const user_id = useUserData().user_id
+    const user_id = useUserData().user_id;
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -110,43 +112,51 @@ const ProjectDetail = () => {
 
     return (
         <>
-        <div className='app'>
+        <div className='app-container'>
             <Header />
-            <div className='app-content'>
-                <h1>{project.title}</h1>
-                <p>Creator: {project.author?.full_name || 'Unknown creator'}</p>
-                <p>Created {Moment(project.created_at)} </p>
-                <p>Last modified {MomentWithTime(project.last_modified)}</p>
-                <h3>Members:</h3>
-                {Array.isArray(project.members) && project.members.length > 0 ? (
-                    <ul>
-                        {project.members.map((member, index) => (
-                            <li key={index}>
-                                {member ? (
-                                    <>
-                                        {member.full_name || 'unknown'} ({member.email || 'unknown'})
-                                        {user_id===project.author.id ? <button className='delete-button' onClick={() => removeMember(member.email)}>Delete</button>:<></>}
-                                    </>
-                                ) : (
-                                    <span>Unknown Member</span>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No members in the project.</p>
-                )}
-                {user_id === project.author.id ?
-                <>
-                <AddMemberForm projectId={project.id} onMemberAdded={handleMemberAdded} />
-                <div>
-                <button className='delete-button' onClick={deleteProject}>Delete Project</button>
+            <div className="content-container">
+                <SidePanel />
+                <div className="main-content">
+                    <h1>{project.title}</h1>
+                    <p>Creator: {project.author?.full_name || 'Unknown creator'}</p>
+                    <p>Description: {project.description}</p>
+                    <p>Created {Moment(project.created_at)}</p>
+                    <p>Last modified {MomentWithTime(project.last_modified)}</p>
+                    <h3>Members:</h3>
+                    {Array.isArray(project.members) && project.members.length > 0 ? (
+                        <ul>
+                            {project.members.map((member, index) => (
+                                <li key={index}>
+                                    {member ? (
+                                        <>
+                                            {member.full_name || 'unknown'} ({member.email || 'unknown'})
+                                            {user_id === project.author.id ? (
+                                                <button className='delete-button' onClick={() => removeMember(member.email)}>
+                                                    Delete
+                                                </button>
+                                            ) : null}
+                                        </>
+                                    ) : (
+                                        <span>Unknown Member</span>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No members in the project.</p>
+                    )}
+                    {user_id === project.author.id ? (
+                        <>
+                            <AddMemberForm projectId={project.id} onMemberAdded={handleMemberAdded} />
+                            <div>
+                                <button className='delete-button' onClick={deleteProject}>Delete Project</button>
+                            </div>
+                        </>
+                    ) : null}
                 </div>
-                </>
-                 : <></>}
             </div>
             <Footer />
-            </div>
+        </div>
         </>
     );
 };

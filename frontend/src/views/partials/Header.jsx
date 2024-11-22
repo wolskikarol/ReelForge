@@ -54,7 +54,7 @@ function Header() {
                             <li className="nav-item">
                                 {isLoggedIn() ? (
                                     <>
-                                        <Link to={"/Profile/"} className="btn custom-btn">
+                                        <Link to={"/profile/"} className="btn custom-btn">
                                             Profile <i className="fas fa-user"></i>
                                         </Link>
                                         <Link to={"/logout/"} className="btn custom-btn ms-2">

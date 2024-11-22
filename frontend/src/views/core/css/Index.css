@@ -1,0 +1,119 @@
+:root {
+    --raisin-black: #1d1a23ff;
+    --antiflash-white: #f0edeeff;
+    --midnight-green: #07393cff;
+    --caribbean-current: #2c666eff;
+    --non-photo-blue: #90ddf0ff;
+}
+
+.app {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--antiflash-white);
+    color: var(--raisin-black);
+}
+
+.hero {
+    background: var(--midnight-green);
+    color: var(--antiflash-white);
+    text-align: center;
+    padding: 50px 20px;
+    border-bottom: 5px solid var(--caribbean-current);
+}
+
+.hero-title {
+    color: var(--antiflash-white);
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    animation: fadeInDown 1s ease-out;
+}
+
+.hero-description {
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    color: var(--non-photo-blue);
+}
+
+.hero-button {
+    display: inline-block;
+    background: var(--non-photo-blue);
+    color: var(--raisin-black);
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid var(--caribbean-current);
+}
+
+.hero-button:hover {
+    background: var(--caribbean-current);
+    color: var(--antiflash-white);
+    transform: scale(1.1);
+}
+
+.app-content {
+    flex: 1;
+    padding: 20px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 1.8rem;
+    color: var(--raisin-black);
+    margin-bottom: 20px;
+}
+
+.project-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.project-card {
+    background: var(--antiflash-white);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.project-card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--caribbean-current);
+    margin-bottom: 10px;
+}
+
+.project-card-description {
+    font-size: 0.9rem;
+    color: var(--raisin-black);
+}
+
+footer {
+    background: var(--raisin-black);
+    color: var(--antiflash-white);
+    text-align: center;
+    padding: 15px;
+    font-size: 0.8rem;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
