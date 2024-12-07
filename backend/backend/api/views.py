@@ -5,9 +5,14 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import NotFound
+from django.db import models
+
 
 from api import serializer as api_serializer
 from api import models as api_models
+from api.permissions import IsAuthorOrProjectMember,IsAuthorOrMemberList,IsAuthorOrMemberDetails
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = api_serializer.CustomTokenObtainPairSerializer
@@ -161,5 +166,48 @@ class RemoveMemberAPIView(APIView):
 class ProjectDetailView(generics.RetrieveAPIView):
     queryset = api_models.Project.objects.all()
     serializer_class = api_serializer.ProjectSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAuthorOrProjectMember]
 
+class ScriptListView(generics.ListCreateAPIView):
+    serializer_class = api_serializer.ScriptSerializer
+    permission_classes = [IsAuthenticated, IsAuthorOrMemberList]
+
+    def get_queryset(self):
+        project_id = self.kwargs.get('project_id')
+        if not project_id:
+            raise NotFound("Project ID not provided")
+        return api_models.Script.objects.filter(project_id=project_id)
+
+    def create(self, request, *args, **kwargs):
+        project_id = self.kwargs.get('project_id')
+        if not project_id:
+            return Response({"detail": "Project ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        project = get_object_or_404(api_models.Project, id=project_id)
+        if request.user != project.author and request.user not in project.members.all():
+            return Response({"detail": "You do not have permission to add scripts to this project."},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        data = request.data.copy()
+        data['project'] = project_id
+        data['created_by'] = request.user.id
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+class ScriptDetailView(generics.RetrieveAPIView):
+    queryset = api_models.Script.objects.all()
+    serializer_class = api_serializer.ScriptSerializer
+    lookup_field = "id"
+    permission_classes = [IsAuthenticated, IsAuthorOrMemberDetails]
+
+    def get_queryset(self):
+        script_id = self.kwargs.get('id')
+        user = self.request.user
+
+        return api_models.Script.objects.filter(
+            id=script_id,
+        ).filter(
+            models.Q(project__members=user) | models.Q(created_by=user)
+        )

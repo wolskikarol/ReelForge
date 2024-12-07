@@ -1,0 +1,33 @@
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; 
+  }
+  
+  header, footer {
+    background-color: var(--raisin-black); 
+    color: var(--antiflash-white); 
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .content-container {
+    display: flex;
+    flex: 1;
+  }
+  
+  .sidepanel {
+    width: 250px;
+    background-color: var(--raisin-black); 
+    color: var(--antiflash-white);
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+  }
+  
+  .main-content {
+    flex-grow: 1; 
+    padding: 20px;
+    overflow-y: auto;
+  }
+  

@@ -9,12 +9,13 @@ import Profile from "./views/pages/Profile";
 import PrivateRoute from "./layouts/PrivateRoute";
 import ProjectDetails from "./views/core/ProjectDetail";
 import ProjectCreate from "./views/core/ProjectCreate";
-import Scripts from "./views/project/Scripts";
 import ShotLists from "./views/project/ShotLists";
 import Storyboards from "./views/project/Storyboards";
 import Schedules from "./views/project/Schedules";
 import Budget from "./views/project/Budget";
 import Tasks from "./views/project/Tasks";
+import ProjectScriptsPage from "./views/project/ScriptsPage";
+import ScriptDetail from "./views/project/ScriptDetail";
 
 function App() {
     return (
@@ -37,7 +38,11 @@ function App() {
                         <Route path="/project/:id" element={<ProjectDetails />} />
                         <Route path="/project/create" element={<ProjectCreate />} />
                         
-                        <Route path="/project/:id/scripts" element={<Scripts />} />
+                        <Route path="/project/:projectid/scripts" element={<ProjectScriptsPage />} />
+                        <Route
+                            path="/project/:projectid/scripts/:scriptid"
+                            element={<ScriptDetail />}
+                        />
                         <Route path="/project/:id/shot-lists" element={<ShotLists />} />
                         <Route path="/project/:id/storyboards" element={<Storyboards />} />
                         <Route path="/project/:id/schedule" element={<Schedules />} />

@@ -67,3 +67,13 @@ class ProjectSerializer(serializers.ModelSerializer):
             self.Meta.depth = 0
         else:
             self.Meta.depth = 1
+
+class ScriptSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = api_models.Script
+        fields = '__all__'
+    
+    def validate_title(self, value):
+        if len(value) < 3:
+            raise serializers.ValidationError("Title must be at least 3 characters long.")
+        return value
