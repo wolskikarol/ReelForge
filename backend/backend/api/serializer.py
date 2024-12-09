@@ -69,6 +69,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             self.Meta.depth = 1
 
 class ScriptSerializer(serializers.ModelSerializer):
+    content = serializers.JSONField(default=list)  # Domyślnie pusta lista
     class Meta:
         model = api_models.Script
         fields = '__all__'

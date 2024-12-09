@@ -196,7 +196,7 @@ class ScriptListView(generics.ListCreateAPIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-class ScriptDetailView(generics.RetrieveAPIView):
+class ScriptDetailView(generics.RetrieveUpdateAPIView):
     queryset = api_models.Script.objects.all()
     serializer_class = api_serializer.ScriptSerializer
     lookup_field = "id"
@@ -211,3 +211,17 @@ class ScriptDetailView(generics.RetrieveAPIView):
         ).filter(
             models.Q(project__members=user) | models.Q(created_by=user)
         )
+    
+    def update(self, request, *args, **kwargs):
+            partial = kwargs.pop('partial', True)
+            instance = self.get_object()
+
+            data = {**request.data, "title": instance.title, "project": instance.project.id, "created_by": instance.created_by.id}
+
+            serializer = self.get_serializer(instance, data=data, partial=partial)
+            if not serializer.is_valid():
+                raise ValidationError(serializer.errors)
+
+            self.perform_update(serializer)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)

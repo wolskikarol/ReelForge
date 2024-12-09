@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import "./SidePanel.css"
 
 const SidePanel = () => {
-  const { id } = useParams();
+  const { projectid } = useParams();
   const navigate = useNavigate();
   const [projectName, setProjectName] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,7 +21,7 @@ const SidePanel = () => {
           return;
         }
 
-        const response = await axios.get(`http://127.0.0.1:8000/api/v1/project/${id}/`, {
+        const response = await axios.get(`http://127.0.0.1:8000/api/v1/project/${projectid}/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -37,7 +37,7 @@ const SidePanel = () => {
     };
 
     fetchProjectName();
-  }, [id]);
+  }, [projectid]);
 
   if (loading) {
     return <div className="sidepanel"><p>Loading project name...</p></div>;
@@ -54,12 +54,12 @@ const SidePanel = () => {
       </div>
       <nav className="sidepanel-nav">
         <ul>
-          <li><Link to={`/project/${id}/scripts`}>Scripts</Link></li>
-          <li><Link to={`/project/${id}/shot-lists`}>Shot Lists</Link></li>
-          <li><Link to={`/project/${id}/storyboards`}>Storyboards</Link></li>
-          <li><Link to={`/project/${id}/schedule`}>Schedules</Link></li>
-          <li><Link to={`/project/${id}/budget`}>Budget</Link></li>
-          <li><Link to={`/project/${id}/tasks`}>Tasks</Link></li>
+          <li><Link to={`/project/${projectid}/scripts`}>Scripts</Link></li>
+          <li><Link to={`/project/${projectid}/shot-lists`}>Shot Lists</Link></li>
+          <li><Link to={`/project/${projectid}/storyboards`}>Storyboards</Link></li>
+          <li><Link to={`/project/${projectid}/schedule`}>Schedules</Link></li>
+          <li><Link to={`/project/${projectid}/budget`}>Budget</Link></li>
+          <li><Link to={`/project/${projectid}/tasks`}>Tasks</Link></li>
         </ul>
       </nav>
     </aside>

@@ -2,10 +2,6 @@ import React, { useEffect, useState} from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Cookies from 'js-cookie'
-import useUserData from '../../plugin/useUserData'
-import Header from '../partials/Header'
-import Footer from '../partials/Footer'
-import SidePanel from '../partials/SidePanel'
 import "./css/Scripts.css"
 
 
@@ -16,7 +12,6 @@ const Scripts = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // For pagination
   const [nextPage, setNextPage] = useState(null);
   const [previousPage, setPreviousPage] = useState(null);
 
@@ -32,9 +27,9 @@ const Scripts = () => {
                   Authorization: `Bearer ${token}`,
               },
           });
-          setScripts(response.data.results); // Użycie `results` do ustawienia danych
-          setNextPage(response.data.next); // Zapisz URL kolejnej strony
-          setPreviousPage(response.data.previous); // Zapisz URL poprzedniej strony
+          setScripts(response.data.results);
+          setNextPage(response.data.next);
+          setPreviousPage(response.data.previous);
       } catch (err) {
           if (err.response && err.response.status === 404) {
               setError("Project or scripts not found.");
@@ -47,7 +42,7 @@ const Scripts = () => {
   };
 
   const handleScriptClick = (scriptId) => {
-    navigate(`/project/${projectid}/scripts/${scriptId}`); // Przejście do strony skryptu
+    navigate(`/project/${projectid}/scripts/${scriptId}`);
   };
 
 
@@ -62,10 +57,9 @@ const Scripts = () => {
                   {scripts.map((script) => (
                       <li key={script.id}
                       style={{ cursor: "pointer", color: "blue" }}
-                      onClick={() => handleScriptClick(script.id)} // Kliknięcie na scenariusz
+                      onClick={() => handleScriptClick(script.id)}
                       >
                           <h2>{script.title}</h2>
-                          <p>{script.content.slice(0, 50)}...</p>
                           <small>
                               Last modified:{" "}
                               {new Date(script.last_modified).toLocaleDateString()}
@@ -77,7 +71,6 @@ const Scripts = () => {
               <p>No scripts found for this project.</p>
           )}
           <div>
-              {/* Buttons for pagination */}
               {previousPage && (
                   <button onClick={() => fetchScripts(previousPage)}>Previous</button>
               )}

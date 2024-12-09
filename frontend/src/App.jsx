@@ -17,6 +17,7 @@ import Tasks from "./views/project/Tasks";
 import ProjectScriptsPage from "./views/project/ScriptsPage";
 import ScriptDetail from "./views/project/ScriptDetail";
 
+
 function App() {
     return (
         <>
@@ -43,11 +44,11 @@ function App() {
                             path="/project/:projectid/scripts/:scriptid"
                             element={<ScriptDetail />}
                         />
-                        <Route path="/project/:id/shot-lists" element={<ShotLists />} />
-                        <Route path="/project/:id/storyboards" element={<Storyboards />} />
-                        <Route path="/project/:id/schedule" element={<Schedules />} />
-                        <Route path="/project/:id/budget" element={<Budget />} />
-                        <Route path="/project/:id/tasks" element={<Tasks />} />
+                        <Route path="/project/:projectid/shot-lists" element={<ShotLists />} />
+                        <Route path="/project/:projectid/storyboards" element={<Storyboards />} />
+                        <Route path="/project/:projectid/schedule" element={<Schedules />} />
+                        <Route path="/project/:projectid/budget" element={<Budget />} />
+                        <Route path="/project/:projectid/tasks" element={<Tasks />} />
 
                     </Routes>     
                 </MainWrapper>
