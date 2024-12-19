@@ -78,3 +78,8 @@ class ScriptSerializer(serializers.ModelSerializer):
         if len(value) < 3:
             raise serializers.ValidationError("Title must be at least 3 characters long.")
         return value
+    
+class ShotSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = api_models.Shot
+        fields = '__all__'

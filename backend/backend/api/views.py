@@ -225,3 +225,65 @@ class ScriptDetailView(generics.RetrieveUpdateAPIView):
             self.perform_update(serializer)
 
             return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class ShotListCreateView(generics.ListCreateAPIView):
+    serializer_class = api_serializer.ShotSerializer
+    permission_classes = [IsAuthenticated, IsAuthorOrMemberList]
+
+    def get_queryset(self):
+        project_id = self.kwargs.get('project_id')
+        if not project_id:
+            raise NotFound("Project ID not provided")
+        return api_models.Shot.objects.filter(project_id=project_id)
+
+    def create(self, request, *args, **kwargs):
+        project_id = self.kwargs.get('project_id')
+        if not project_id:
+            return Response({"detail": "Project ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        project = get_object_or_404(api_models.Project, id=project_id)
+        if request.user != project.author and request.user not in project.members.all():
+            return Response(
+                {"detail": "You do not have permission to add shots to this project."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        data = request.data.copy()
+        data['project'] = project_id
+        data['created_by'] = request.user.id
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class ShotDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = api_models.Shot.objects.all()
+    serializer_class = api_serializer.ShotSerializer
+    lookup_field = "id"
+    permission_classes = [IsAuthenticated, IsAuthorOrMemberDetails]
+
+    def get_queryset(self):
+        shot_id = self.kwargs.get('id')
+        user = self.request.user
+
+        return api_models.Shot.objects.filter(
+            id=shot_id
+        ).filter(
+            models.Q(project__author=user) | models.Q(project__members=user)
+        )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+
+        data = {**request.data, "project": instance.project.id}
+
+        serializer = self.get_serializer(instance, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+

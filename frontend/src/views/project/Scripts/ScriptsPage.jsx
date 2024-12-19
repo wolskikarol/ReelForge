@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Scripts from "./Scripts";
 import AddScriptForm from "./AddScriptForm";
-import Header from '../partials/Header'
-import Footer from '../partials/Footer'
-import SidePanel from '../partials/SidePanel'
+import Header from '../../partials/Header'
+import Footer from '../../partials/Footer'
+import SidePanel from '../../partials/SidePanel'
 
 const ProjectScriptsPage = () => {
   const [refreshList, setRefreshList] = useState(false);

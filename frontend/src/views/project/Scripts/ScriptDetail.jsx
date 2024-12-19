@@ -3,9 +3,9 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import Cookies from "js-cookie"
 import ScriptEditor from "./ScriptEditor";
-import Header from "../partials/Header";
-import Footer from "../partials/Footer";
-import SidePanel from "../partials/SidePanel";
+import Header from "../../partials/Header";
+import Footer from "../../partials/Footer";
+import SidePanel from "../../partials/SidePanel";
 
 
 

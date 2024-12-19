@@ -2,7 +2,7 @@ import React, { useEffect, useState} from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Cookies from 'js-cookie'
-import "./css/Scripts.css"
+import "../css/Scripts.css"
 
 
 const Scripts = () => {
@@ -62,7 +62,7 @@ const Scripts = () => {
                           <h2>{script.title}</h2>
                           <small>
                               Last modified:{" "}
-                              {new Date(script.last_modified).toLocaleDateString()}
+                              {new Date(script.updated_at).toLocaleDateString()}
                           </small>
                       </li>
                   ))}

@@ -41,7 +41,7 @@ class IsAuthorOrMemberDetails(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
 
-        if obj.created_by == request.user:
+        if request.user == obj.project.author:
             return True
         
         if request.user in obj.project.members.all():

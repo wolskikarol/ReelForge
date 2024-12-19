@@ -12,7 +12,7 @@ import SidePanel from '../partials/SidePanel.jsx';
 import "./css/ProjectDetail.css";
 
 const ProjectDetail = () => {
-    const { id } = useParams();
+    const { projectid } = useParams();
     const navigate = useNavigate();
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -28,7 +28,7 @@ const ProjectDetail = () => {
                     return;
                 }
 
-                const response = await axios.get(`http://127.0.0.1:8000/api/v1/project/${id}/`, {
+                const response = await axios.get(`http://127.0.0.1:8000/api/v1/project/${projectid}/`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -43,7 +43,7 @@ const ProjectDetail = () => {
         };
 
         fetchProject();
-    }, [id]);
+    }, [projectid]);
 
     const deleteProject = async () => {
         try {
@@ -53,7 +53,7 @@ const ProjectDetail = () => {
                 return;
             }
 
-            await axios.delete(`http://127.0.0.1:8000/api/v1/project/${id}/delete/`, {
+            await axios.delete(`http://127.0.0.1:8000/api/v1/project/${projectid}/delete/`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -81,7 +81,7 @@ const ProjectDetail = () => {
             }
 
             await axios.post(
-                `http://127.0.0.1:8000/api/v1/project/${id}/remove-member/`,
+                `http://127.0.0.1:8000/api/v1/project/${projectid}/remove-member/`,
                 { email },
                 {
                     headers: {
@@ -147,7 +147,7 @@ const ProjectDetail = () => {
                     )}
                     {user_id === project.author.id ? (
                         <>
-                            <AddMemberForm projectId={project.id} onMemberAdded={handleMemberAdded} />
+                            <AddMemberForm projectId={project.projectid} onMemberAdded={handleMemberAdded} />
                             <div>
                                 <button className='delete-button' onClick={deleteProject}>Delete Project</button>
                             </div>

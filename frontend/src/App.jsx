@@ -9,13 +9,13 @@ import Profile from "./views/pages/Profile";
 import PrivateRoute from "./layouts/PrivateRoute";
 import ProjectDetails from "./views/core/ProjectDetail";
 import ProjectCreate from "./views/core/ProjectCreate";
-import ShotLists from "./views/project/ShotLists";
-import Storyboards from "./views/project/Storyboards";
-import Schedules from "./views/project/Schedules";
-import Budget from "./views/project/Budget";
-import Tasks from "./views/project/Tasks";
-import ProjectScriptsPage from "./views/project/ScriptsPage";
-import ScriptDetail from "./views/project/ScriptDetail";
+import ShotList from "./views/project/ShotLists/ShotList";
+import Storyboards from "./views/project/Storyboards/Storyboards";
+import Schedules from "./views/project/Schedules/Schedules";
+import Budget from "./views/project/Budget/Budget";
+import Tasks from "./views/project/Tasks/Tasks";
+import ProjectScriptsPage from "./views/project/Scripts/ScriptsPage";
+import ScriptDetail from "./views/project/Scripts/ScriptDetail";
 
 
 function App() {
@@ -36,7 +36,7 @@ function App() {
                         <Route path="/about/" element={<About />} />
 
                         {/*Project*/}
-                        <Route path="/project/:id" element={<ProjectDetails />} />
+                        <Route path="/project/:projectid" element={<ProjectDetails />} />
                         <Route path="/project/create" element={<ProjectCreate />} />
                         
                         <Route path="/project/:projectid/scripts" element={<ProjectScriptsPage />} />
@@ -44,7 +44,7 @@ function App() {
                             path="/project/:projectid/scripts/:scriptid"
                             element={<ScriptDetail />}
                         />
-                        <Route path="/project/:projectid/shot-lists" element={<ShotLists />} />
+                        <Route path="/project/:projectid/shot-lists" element={<ShotList />} />
                         <Route path="/project/:projectid/storyboards" element={<Storyboards />} />
                         <Route path="/project/:projectid/schedule" element={<Schedules />} />
                         <Route path="/project/:projectid/budget" element={<Budget />} />
