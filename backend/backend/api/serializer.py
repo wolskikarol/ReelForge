@@ -69,7 +69,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             self.Meta.depth = 1
 
 class ScriptSerializer(serializers.ModelSerializer):
-    content = serializers.JSONField(default=list)  # Domyślnie pusta lista
+    content = serializers.JSONField(default=list)
     class Meta:
         model = api_models.Script
         fields = '__all__'
@@ -83,3 +83,10 @@ class ShotSerializer(serializers.ModelSerializer):
     class Meta:
         model = api_models.Shot
         fields = '__all__'
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = api_models.Task
+        fields = '__all__'
+        read_only_fields = ['created_by', 'created_at', 'updated_at']

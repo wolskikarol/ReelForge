@@ -15,10 +15,17 @@ urlpatterns = [
     path('project/<int:project_id>/add-member/', api_views.AddMemberAPIView.as_view(), name='add-member'),
     path('project/<int:pk>/', api_views.ProjectDetailView.as_view(), name='project-detail'),
     path('project/<int:project_id>/remove-member/', api_views.RemoveMemberAPIView.as_view(), name='remove-member'),
+    path('project/<int:project_id>/users/', api_views.ProjectUsersAPIView.as_view(), name='project-users'),
 
     path('project/<int:project_id>/scripts/', api_views.ScriptListView.as_view(), name='script-list'),
     path('project/<int:projectid>/scripts/<int:id>/', api_views.ScriptDetailView.as_view(), name='script-detail'),
 
     path('project/<int:project_id>/shots/', api_views.ShotListCreateView.as_view(), name='shots-list'),
     path('project/<int:projectid>/shots/<int:id>/', api_views.ShotDetailView.as_view(), name='shots-detail'),
+
+    path('project/<int:project_id>/tasks/', api_views.TaskListCreateView.as_view(), name='task-list-create'),
+    path('project/<int:project_id>/tasks/<int:id>/', api_views.TaskDetailView.as_view(), name='task-detail'),
+    path('project/<int:project_id>/tasks/<int:id>/assign/', api_views.TaskAssignUserView.as_view(), name='task-assign-user'),
+    path('project/<int:project_id>/tasks/status/<str:status>/', api_views.TaskByStatusListView.as_view(), name='task-by-status'),
+
     ]

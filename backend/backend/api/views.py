@@ -168,6 +168,25 @@ class ProjectDetailView(generics.RetrieveAPIView):
     serializer_class = api_serializer.ProjectSerializer
     permission_classes = [IsAuthenticated, IsAuthorOrProjectMember]
 
+
+class ProjectUsersAPIView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated, IsAuthorOrProjectMember]
+
+    def retrieve(self, request, *args, **kwargs):
+        project_id = self.kwargs.get("project_id")
+        try:
+            project = api_models.Project.objects.get(id=project_id)
+        except api_models.Project.DoesNotExist:
+            return Response({"detail": "Project not found."}, status=404)
+
+        if request.user != project.author and request.user not in project.members.all():
+            return Response({"detail": "You do not have permission to view this project."}, status=403)
+
+        users = [project.author] + list(project.members.all())
+        serializer = api_serializer.UserSerializer(users, many=True)
+        return Response(serializer.data)
+
+
 class ScriptListView(generics.ListCreateAPIView):
     serializer_class = api_serializer.ScriptSerializer
     permission_classes = [IsAuthenticated, IsAuthorOrMemberList]
@@ -287,3 +306,84 @@ class ShotDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class TaskListCreateView(generics.ListCreateAPIView):
+    serializer_class = api_serializer.TaskSerializer
+    permission_classes = [IsAuthenticated, IsAuthorOrProjectMember]
+
+    def get_queryset(self):
+        project_id = self.kwargs.get('project_id')
+        if not project_id:
+            return api_models.Task.objects.none()
+        return api_models.Task.objects.filter(project_id=project_id)
+
+    def create(self, request, *args, **kwargs):
+        project_id = self.kwargs.get('project_id')
+        project = get_object_or_404(api_models.Project, id=project_id)
+
+        if request.user != project.author and request.user not in project.members.all():
+            return Response({"detail": "You do not have permission to add tasks to this project."},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        data = request.data.copy()
+        data['project'] = project_id
+        data['created_by'] = request.user.id
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(created_by=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = api_models.Task.objects.all()
+    serializer_class = api_serializer.TaskSerializer
+    lookup_field = "id"
+    permission_classes = [IsAuthenticated, IsAuthorOrMemberDetails]
+
+    def get_queryset(self):
+        task_id = self.kwargs.get('id')
+        user = self.request.user
+        return api_models.Task.objects.filter(id=task_id).filter(
+            models.Q(project__author=user) | models.Q(project__members=user)
+        )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+
+        data = {**request.data, "project": instance.project.id}
+        serializer = self.get_serializer(instance, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class TaskAssignUserView(generics.UpdateAPIView):
+    queryset = api_models.Task.objects.all()
+    serializer_class = api_serializer.TaskSerializer
+    permission_classes = [IsAuthenticated, IsAuthorOrProjectMember]
+
+    def update(self, request, *args, **kwargs):
+        task = self.get_object()
+        user_id = request.data.get('assigned_to')
+        user = get_object_or_404(User, id=user_id)
+
+        if request.user != task.project.author and request.user not in task.project.members.all():
+            return Response({"detail": "You do not have permission to assign users."}, status=status.HTTP_403_FORBIDDEN)
+
+        task.assigned_to = user
+        task.save()
+        return Response(TaskSerializer(task).data, status=status.HTTP_200_OK)
+
+
+class TaskByStatusListView(generics.ListAPIView):
+    serializer_class = api_serializer.TaskSerializer
+    permission_classes = [IsAuthenticated, IsAuthorOrProjectMember]
+
+    def get_queryset(self):
+        project_id = self.kwargs.get('project_id')
+        status_filter = self.kwargs.get('status')
+        if not project_id or status_filter not in ['new', 'todo', 'in_progress', 'done']:
+            return api_models.Task.objects.none()
+
+        return api_models.Task.objects.filter(project_id=project_id, status=status_filter)

@@ -13,7 +13,7 @@ import ShotList from "./views/project/ShotLists/ShotList";
 import Storyboards from "./views/project/Storyboards/Storyboards";
 import Schedules from "./views/project/Schedules/Schedules";
 import Budget from "./views/project/Budget/Budget";
-import Tasks from "./views/project/Tasks/Tasks";
+import TaskBoard from "./views/project/Tasks/TaskBoard";
 import ProjectScriptsPage from "./views/project/Scripts/ScriptsPage";
 import ScriptDetail from "./views/project/Scripts/ScriptDetail";
 
@@ -48,7 +48,7 @@ function App() {
                         <Route path="/project/:projectid/storyboards" element={<Storyboards />} />
                         <Route path="/project/:projectid/schedule" element={<Schedules />} />
                         <Route path="/project/:projectid/budget" element={<Budget />} />
-                        <Route path="/project/:projectid/tasks" element={<Tasks />} />
+                        <Route path="/project/:projectid/tasks" element={<TaskBoard />} />
 
                     </Routes>     
                 </MainWrapper>
