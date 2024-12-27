@@ -1,20 +1,266 @@
-import React from 'react'
-import Header from '../../partials/Header'
-import Footer from '../../partials/Footer'
-import SidePanel from '../../partials/SidePanel'
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import Cookies from "js-cookie";
+import moment from "moment";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import useUserData from '../../../plugin/useUserData.js';
+import Header from '../../partials/Header.jsx';
+import Footer from '../../partials/Footer.jsx';
+import SidePanel from '../../partials/SidePanel.jsx';
+
 
 const Schedules = () => {
+  const { projectid } = useParams();
+  const [events, setEvents] = useState([]);
+  const [newEvent, setNewEvent] = useState({
+    title: "",
+    description: "",
+    start_time: "",
+    end_time: "",
+    attendees:[],
+  });
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const localizer = momentLocalizer(moment);
+  const [view, setView] = useState("month");
+  const [date, setDate] = useState(new Date());
+  const [isAttending, setIsAttending] = useState(false);
+  const user_id = useUserData().user_id;
+  
+
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8000/api/v1/project/${projectid}/events/`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("access_token")}`,
+        },
+      })
+      .then((response) => {
+  
+        const formattedEvents = response.data.results.map((event) => ({
+          id: event.id,
+          title: event.title,
+          start: new Date(event.start_time),
+          end: new Date(event.end_time),
+          description: event.description,
+          attendees: event.attendees || [],
+          isAttending: (event.attendees || []).some((attendee) => attendee.id === user_id),
+        }));
+  
+        setEvents(formattedEvents);
+        console.log("Formatted Events:", formattedEvents);
+      })
+      .catch((error) => console.error("Error fetching events:", error));
+  }, [projectid]);
+  
+  
+  
+  
+
+  const handleAddEvent = () => {
+    axios
+      .post(
+        `http://localhost:8000/api/v1/project/${projectid}/events/`,
+        {
+          ...newEvent,
+          start_time: moment(newEvent.start_time).toISOString(),
+          end_time: moment(newEvent.end_time).toISOString(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("access_token")}`,
+          },
+        }
+      )
+      .then((response) => {
+        setEvents([
+          ...events,
+          {
+            id: response.data.id,
+            title: response.data.title,
+            start: new Date(response.data.start_time),
+            end: new Date(response.data.end_time),
+            description: response.data.description,
+            attendees: [],
+            isAttending: false,
+          },
+        ]);
+        setNewEvent({ title: "", description: "", start_time: "", end_time: "" });
+        setShowModal(false);
+      })
+      .catch((error) => console.error("Error adding event:", error));
+  };
+
+  const handleSelectEvent = (event) => {
+    console.log("Selected Event:", event);
+    setSelectedEvent(event);
+    setIsAttending(event.isAttending);
+    setShowDetailsModal(true);
+  };
+  
+  
+  const toggleAttendance = () => {
+    axios
+      .post(
+        `http://localhost:8000/api/v1/events/${selectedEvent.id}/toggle-attendance/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("access_token")}`,
+          },
+        }
+      )
+      .then((response) => {
+        const user = {
+          id: user_id,
+          full_name: useUserData().full_name || "Your Full Name",
+        };
+  
+        const updatedAttendees = selectedEvent.isAttending
+          ? selectedEvent.attendees.filter((attendee) => attendee.id !== user_id)
+          : [...selectedEvent.attendees, user];
+  
+        setSelectedEvent((prevSelectedEvent) => ({
+          ...prevSelectedEvent,
+          attendees: updatedAttendees,
+          isAttending: !prevSelectedEvent.isAttending,
+        }));
+  
+        setEvents((prevEvents) =>
+          prevEvents.map((event) =>
+            event.id === selectedEvent.id
+              ? { ...event, attendees: updatedAttendees, isAttending: !event.isAttending }
+              : event
+          )
+        );
+  
+        console.log("Updated attendees:", updatedAttendees);
+      })
+      .catch((error) => console.error("Error toggling attendance:", error));
+  };
+  
+  
+  
+  
+
   return (
+
+
     <div className='app-container'>
-        <Header />
-        <div className="content-container">
-            <SidePanel />
-            <div className="main-content">
-            <div>Schedules</div>
-            </div>
+    <Header />
+    <div className="content-container">
+        <SidePanel />
+        <div className="main-content">
+
+        <div>
+      <h2>Project Schedule</h2>
+      <button onClick={() => setShowModal(true)}>Add New Event</button>
+      <Calendar
+        localizer={localizer}
+        events={events}
+        startAccessor="start"
+        endAccessor="end"
+        style={{ height: 500 }}
+        onSelectEvent={handleSelectEvent}
+        view={view}
+        onView={(newView) => setView(newView)}
+        date={date}
+        onNavigate={(newDate) => setDate(newDate)}
+      />
+
+      {showModal && (
+        <div style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          background: '#fff',
+          padding: '20px',
+          zIndex: 1000,
+        }}>
+          <h3>Add New Event</h3>
+          <input
+            type="text"
+            placeholder="Title"
+            value={newEvent.title}
+            onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+          />
+          <textarea
+            placeholder="Description"
+            value={newEvent.description}
+            onChange={(e) =>
+              setNewEvent({ ...newEvent, description: e.target.value })
+            }
+          />
+          <label>Start Time:</label>
+          <input
+            type="datetime-local"
+            value={newEvent.start_time}
+            onChange={(e) =>
+              setNewEvent({ ...newEvent, start_time: e.target.value })
+            }
+          />
+          <label>End Time:</label>
+          <input
+            type="datetime-local"
+            value={newEvent.end_time}
+            onChange={(e) =>
+              setNewEvent({ ...newEvent, end_time: e.target.value })
+            }
+          />
+          <button onClick={handleAddEvent}>Save</button>
+          <button onClick={() => setShowModal(false)}>Cancel</button>
         </div>
-        <Footer />
+      )}
+
+      {/* Modal szczegółów wydarzenia */}
+      {showDetailsModal && selectedEvent && (
+        <div style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          background: '#fff',
+          padding: '20px',
+          zIndex: 1000,
+        }}>
+          <h3>Event Details</h3>
+          <p><strong>Title:</strong> {selectedEvent.title}</p>
+          <p><strong>Description:</strong> {selectedEvent.description}</p>
+          <p><strong>Start:</strong> {selectedEvent.start.toLocaleString()}</p>
+          <p><strong>End:</strong> {selectedEvent.end.toLocaleString()}</p>
+          <p><strong>Attendees:</strong></p>
+          <ul>
+  {selectedEvent.attendees.map((attendee) => (
+    <li
+      key={attendee.id}
+      style={{
+        fontWeight: attendee.id === user_id ? "bold" : "normal",
+        color: attendee.id === user_id ? "#007bff" : "#000",
+      }}
+    >
+      {attendee.full_name}
+    </li>
+  ))}
+</ul>
+
+          <button onClick={toggleAttendance}>
+          {selectedEvent.isAttending ? "Cancel Attendance" : "Join Event"}
+          </button>
+          <button onClick={() => setShowDetailsModal(false)}>Close</button>
+        </div>
+      )}
     </div>
-    )
-}
-export default Schedules
+        </div>
+    </div>
+    <Footer />
+</div>
+
+  );
+};
+
+export default Schedules;

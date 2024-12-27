@@ -387,3 +387,55 @@ class TaskByStatusListView(generics.ListAPIView):
             return api_models.Task.objects.none()
 
         return api_models.Task.objects.filter(project_id=project_id, status=status_filter)
+
+
+class EventListCreateView(generics.ListCreateAPIView):
+    serializer_class = api_serializer.EventSerializer
+    permission_classes = [IsAuthenticated, IsAuthorOrMemberList]
+
+    def get_queryset(self):
+        project_id = self.kwargs.get('project_id')
+        return api_models.Event.objects.filter(project_id=project_id)
+
+    def create(self, request, *args, **kwargs):
+        project_id = self.kwargs.get('project_id')
+        project = get_object_or_404(api_models.Project, id=project_id)
+        if request.user != project.author and request.user not in project.members.all():
+            return Response({"detail": "You do not have permission to add events."},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        data = request.data.copy()
+        data['project'] = project_id
+        data['created_by'] = request.user.id
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class EventDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = api_serializer.EventSerializer
+    permission_classes = [IsAuthenticated, IsAuthorOrMemberDetails]
+
+    def get_queryset(self):
+        return api_models.Event.objects.filter(project__author=self.request.user)
+
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def toggle_attendance(request, event_id):
+    try:
+        event = api_models.Event.objects.get(id=event_id)
+        user = request.user
+        if user in event.attendees.all():
+            event.attendees.remove(user)
+            return Response({"message": "Removed from attendees"})
+        else:
+            event.attendees.add(user)
+            return Response({"message": "Added to attendees"})
+    except api_models.Event.DoesNotExist:
+        return Response({"error": "Event not found"}, status=404)

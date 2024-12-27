@@ -28,4 +28,10 @@ urlpatterns = [
     path('project/<int:project_id>/tasks/<int:id>/assign/', api_views.TaskAssignUserView.as_view(), name='task-assign-user'),
     path('project/<int:project_id>/tasks/status/<str:status>/', api_views.TaskByStatusListView.as_view(), name='task-by-status'),
 
+    path('project/<int:project_id>/events/', api_views.EventListCreateView.as_view(), name='events-list'),
+    path('project/<int:project_id>/events/<int:id>/', api_views.EventDetailView.as_view(), name='event-detail'),
+    path('events/<int:event_id>/toggle-attendance/', api_views.toggle_attendance, name='toggle-attendance'),
+
+
+
     ]

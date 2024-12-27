@@ -90,3 +90,12 @@ class TaskSerializer(serializers.ModelSerializer):
         model = api_models.Task
         fields = '__all__'
         read_only_fields = ['created_by', 'created_at', 'updated_at']
+
+
+
+class EventSerializer(serializers.ModelSerializer):
+    attendees = UserSerializer(many=True, read_only=True)  # Serializowanie uczestników
+    
+    class Meta:
+        model = api_models.Event
+        fields = '__all__'
