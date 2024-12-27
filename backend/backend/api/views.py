@@ -7,7 +7,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import NotFound
 from django.db import models
-
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.decorators import api_view, permission_classes
 
 from api import serializer as api_serializer
 from api import models as api_models
@@ -421,9 +422,6 @@ class EventDetailView(generics.RetrieveUpdateDestroyAPIView):
         return api_models.Event.objects.filter(project__author=self.request.user)
 
 
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -439,3 +437,46 @@ def toggle_attendance(request, event_id):
             return Response({"message": "Added to attendees"})
     except api_models.Event.DoesNotExist:
         return Response({"error": "Event not found"}, status=404)
+
+
+
+class BudgetRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated, IsAuthorOrProjectMember]
+    serializer_class = api_serializer.BudgetSerializer
+
+    def get_object(self):
+        project = get_object_or_404(api_models.Project, id=self.kwargs['project_id'])
+        budget, created = api_models.Budget.objects.get_or_create(project=project)
+        return budget
+
+
+
+class ExpenseListCreateView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated, IsAuthorOrProjectMember]
+    serializer_class = api_serializer.ExpenseSerializer
+
+    def get_queryset(self):
+        project_id = self.kwargs['project_id']
+        queryset = api_models.Expense.objects.filter(project__id=project_id)
+        category = self.request.query_params.get('category')
+        if category:
+            queryset = queryset.filter(category=category)
+        return queryset
+
+    def perform_create(self, serializer):
+        project = get_object_or_404(api_models.Project, id=self.kwargs['project_id'])
+        if self.request.user != project.author and self.request.user not in project.members.all():
+            raise PermissionDenied("You do not have permission to add expenses to this project.")
+        serializer.save(project=project)
+
+
+class ExpenseDetailView(generics.RetrieveDestroyAPIView):
+    permission_classes = [IsAuthenticated, IsAuthorOrProjectMember]
+    serializer_class = api_serializer.ExpenseSerializer
+
+    def get_queryset(self):
+        return api_models.Expense.objects.filter(project__id=self.kwargs['project_id'])
+
+    def get_object(self):
+        expense = get_object_or_404(api_models.Expense, id=self.kwargs['expense_id'], project__id=self.kwargs['project_id'])
+        return expense

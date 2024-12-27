@@ -32,6 +32,9 @@ urlpatterns = [
     path('project/<int:project_id>/events/<int:id>/', api_views.EventDetailView.as_view(), name='event-detail'),
     path('events/<int:event_id>/toggle-attendance/', api_views.toggle_attendance, name='toggle-attendance'),
 
+    path('project/<int:project_id>/budget/', api_views.BudgetRetrieveUpdateView.as_view(), name='project-budget'),
+    path('project/<int:project_id>/expenses/', api_views.ExpenseListCreateView.as_view(), name='project-expenses'),
+    path('project/<int:project_id>/expenses/<int:expense_id>/', api_views.ExpenseDetailView.as_view(), name='expense-detail'),
 
 
     ]

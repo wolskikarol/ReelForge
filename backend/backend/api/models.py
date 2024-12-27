@@ -125,3 +125,33 @@ class Event(models.Model):
     def __str__(self):
         return f"{self.title} ({self.start_time} - {self.end_time})"
 
+class ExpenseCategory(models.TextChoices):
+    EQUIPMENT = "Equipment", "Equipment"
+    TRANSPORT = "Transport", "Transport"
+    LABOR = "Labor", "Labor"
+    OTHER = "Other", "Other"
+
+class Expense(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='expenses')
+    description = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    category = models.CharField(max_length=50, choices=ExpenseCategory.choices, default=ExpenseCategory.OTHER)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.description} - {self.amount} PLN ({self.category})"
+
+class Budget(models.Model):
+    project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name='budget')
+    total_budget = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+
+    @property
+    def total_expenses(self):
+        return sum(expense.amount for expense in self.project.expenses.all())
+
+    @property
+    def remaining_budget(self):
+        return self.total_budget - self.total_expenses
+
+    def __str__(self):
+        return f"Budget for {self.project.title}"

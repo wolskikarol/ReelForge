@@ -94,8 +94,27 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
-    attendees = UserSerializer(many=True, read_only=True)  # Serializowanie uczestników
+    attendees = UserSerializer(many=True, read_only=True)
     
     class Meta:
         model = api_models.Event
         fields = '__all__'
+
+
+class ExpenseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = api_models.Expense
+        fields = ['id', 'project', 'description', 'amount', 'category', 'created_at']
+        read_only_fields = ['project']
+
+
+class BudgetSerializer(serializers.ModelSerializer):
+    project = serializers.PrimaryKeyRelatedField(read_only=True)
+    total_expenses = serializers.FloatField(read_only=True)
+    remaining_budget = serializers.FloatField(read_only=True)
+
+    class Meta:
+        model = api_models.Budget
+        fields = ['id', 'project', 'total_budget', 'total_expenses', 'remaining_budget']
+
+
