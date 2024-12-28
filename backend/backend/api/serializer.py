@@ -118,3 +118,8 @@ class BudgetSerializer(serializers.ModelSerializer):
         fields = ['id', 'project', 'total_budget', 'total_expenses', 'remaining_budget']
 
 
+class StoryboardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = api_models.Storyboard
+        fields = ['id', 'title', 'description', 'image', 'created_at', 'updated_at', 'project', 'created_by']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'project', 'created_by']

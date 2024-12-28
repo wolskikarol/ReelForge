@@ -39,6 +39,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.48.2",
     "react-icons": "^4.11.0",
+    "react-medium-image-zoom": "^5.2.12",
     "react-modal": "^3.16.3",
     "react-photo-album": "^2.3.0",
     "react-router-dom": "6.10.0",

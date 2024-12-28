@@ -155,3 +155,15 @@ class Budget(models.Model):
 
     def __str__(self):
         return f"Budget for {self.project.title}"
+
+class Storyboard(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='storyboards')
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to="storyboards/")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title

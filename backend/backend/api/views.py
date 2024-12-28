@@ -480,3 +480,43 @@ class ExpenseDetailView(generics.RetrieveDestroyAPIView):
     def get_object(self):
         expense = get_object_or_404(api_models.Expense, id=self.kwargs['expense_id'], project__id=self.kwargs['project_id'])
         return expense
+
+
+
+# views.py
+class StoryboardListCreateView(generics.ListCreateAPIView):
+    serializer_class = api_serializer.StoryboardSerializer
+    permission_classes = [IsAuthenticated, IsAuthorOrMemberList]
+
+    def get_queryset(self):
+        project_id = self.kwargs.get('project_id')
+        if not project_id:
+            raise NotFound("Project ID not provided")
+        return api_models.Storyboard.objects.filter(project_id=project_id)
+
+    def create(self, request, *args, **kwargs):
+        project_id = self.kwargs.get('project_id')
+        if not project_id:
+            return Response({"detail": "Project ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        project = get_object_or_404(api_models.Project, id=project_id)
+        if request.user != project.author and request.user not in project.members.all():
+            return Response(
+                {"detail": "You do not have permission to add storyboards to this project."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        data = request.data.copy()
+        data['project'] = project_id
+        data['created_by'] = request.user.id
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class StoryboardDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = api_models.Storyboard.objects.all()
+    serializer_class = api_serializer.StoryboardSerializer
+    lookup_field = "id"
+    permission_classes = [IsAuthenticated, IsAuthorOrMemberDetails]

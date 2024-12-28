@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 from api import views as api_views
 
+
 urlpatterns = [
     path('user/token/', api_views.CustomTokenObtainPairView.as_view()),
     path('user/token/refresh/', TokenRefreshView.as_view()),
@@ -36,5 +37,7 @@ urlpatterns = [
     path('project/<int:project_id>/expenses/', api_views.ExpenseListCreateView.as_view(), name='project-expenses'),
     path('project/<int:project_id>/expenses/<int:expense_id>/', api_views.ExpenseDetailView.as_view(), name='expense-detail'),
 
+    path('project/<int:project_id>/storyboards/', api_views.StoryboardListCreateView.as_view(), name='storyboard-list'),
+    path('project/<int:projectid>/storyboards/<int:id>/', api_views.StoryboardDetailView.as_view(), name='storyboard-detail'),
 
     ]
