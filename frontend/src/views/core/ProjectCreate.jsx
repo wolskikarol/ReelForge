@@ -3,6 +3,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import Header from "../partials/Header";
 import Footer from "../partials/Footer";
+import "./css/ProjectCreate.css"
 
 const ProjectCreate = () => {
     const [title, setTitle] = useState("");
@@ -25,8 +26,10 @@ const ProjectCreate = () => {
             setSuccess("Project created successfully!");
             setTitle("");
             setDescription("");
+            setError(null);
         } catch (err) {
             setError(err.response?.data || "Something went wrong");
+            setSuccess(null);
         }
     };
 
@@ -34,26 +37,34 @@ const ProjectCreate = () => {
         <div className="app">
             <Header />
             <div className="app-content">
-                <form onSubmit={handleSubmit}>
-                    <label htmlFor="title">Project Title:</label>
-                    <input
-                        type="text"
-                        id="title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                    />
-                    <label htmlFor="description">Project Description:</label>
-                    <textarea
-                        id="description"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        required
-                    />
-                    <button type="submit">Create Project</button>
-                </form>
-                {success && <p style={{ color: "green" }}>{success}</p>}
-                {error && <p style={{ color: "red" }}>{error}</p>}
+                <div className="project-create-container">
+                    <form className="project-create-form" onSubmit={handleSubmit}>
+                        <label htmlFor="title">Project Title:</label>
+                        <input
+                            type="text"
+                            id="title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            placeholder="Enter project title"
+                            required
+                        />
+                        <label htmlFor="description">Project Description:</label>
+                        <textarea
+                            id="description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="Enter project description"
+                            required
+                        />
+                        <button type="submit">Create Project</button>
+                    </form>
+                    {success && (
+                        <p className="project-create-message success">{success}</p>
+                    )}
+                    {error && (
+                        <p className="project-create-message error">{error}</p>
+                    )}
+                </div>
             </div>
             <Footer />
         </div>
@@ -61,3 +72,4 @@ const ProjectCreate = () => {
 };
 
 export default ProjectCreate;
+

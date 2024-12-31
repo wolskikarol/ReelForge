@@ -20,6 +20,7 @@ urlpatterns = [
 
     path('project/<int:project_id>/scripts/', api_views.ScriptListView.as_view(), name='script-list'),
     path('project/<int:projectid>/scripts/<int:id>/', api_views.ScriptDetailView.as_view(), name='script-detail'),
+    path('project/<int:projectid>/scripts/<int:id>/delete/', api_views.ScriptDeleteView.as_view(), name='script-delete'),
 
     path('project/<int:project_id>/shots/', api_views.ShotListCreateView.as_view(), name='shots-list'),
     path('project/<int:projectid>/shots/<int:id>/', api_views.ShotDetailView.as_view(), name='shots-detail'),

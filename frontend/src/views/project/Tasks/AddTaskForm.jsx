@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./css/AddTaskForm.css";
 
 const AddTaskForm = ({ onAdd }) => {
   const [formData, setFormData] = useState({
@@ -14,7 +15,7 @@ const AddTaskForm = ({ onAdd }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: "16px" }}>
+    <form className="add-task-form" onSubmit={handleSubmit}>
       <input
         type="text"
         placeholder="Task Title"
@@ -25,7 +26,10 @@ const AddTaskForm = ({ onAdd }) => {
       <textarea
         placeholder="Description"
         value={formData.description}
-        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+        onChange={(e) =>
+          setFormData({ ...formData, description: e.target.value })
+        }
+        rows="4"
       />
       <select
         value={formData.status}

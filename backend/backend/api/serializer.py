@@ -74,11 +74,6 @@ class ScriptSerializer(serializers.ModelSerializer):
         model = api_models.Script
         fields = '__all__'
     
-    def validate_title(self, value):
-        if len(value) < 3:
-            raise serializers.ValidationError("Title must be at least 3 characters long.")
-        return value
-    
 class ShotSerializer(serializers.ModelSerializer):
     class Meta:
         model = api_models.Shot
@@ -122,4 +117,4 @@ class StoryboardSerializer(serializers.ModelSerializer):
     class Meta:
         model = api_models.Storyboard
         fields = ['id', 'title', 'description', 'image', 'created_at', 'updated_at', 'project', 'created_by']
-        read_only_fields = ['id', 'created_at', 'updated_at', 'project', 'created_by']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'created_by']

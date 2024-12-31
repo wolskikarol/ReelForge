@@ -9,6 +9,7 @@ import useUserData from '../../../plugin/useUserData.js';
 import Header from '../../partials/Header.jsx';
 import Footer from '../../partials/Footer.jsx';
 import SidePanel from '../../partials/SidePanel.jsx';
+import "./css/Schedules.css"
 
 
 const Schedules = () => {
@@ -95,6 +96,21 @@ const Schedules = () => {
       .catch((error) => console.error("Error adding event:", error));
   };
 
+  const handleDeleteEvent = (eventId) => {
+    axios
+      .delete(`http://localhost:8000/api/v1/project/${projectid}/events/${eventId}/`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("access_token")}`,
+        },
+      })
+      .then(() => {
+        setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
+        setShowDetailsModal(false);
+      })
+      .catch((error) => console.error("Error deleting event:", error));
+  };
+  
+
   const handleSelectEvent = (event) => {
     console.log("Selected Event:", event);
     setSelectedEvent(event);
@@ -144,122 +160,136 @@ const Schedules = () => {
   };
   
   
-  
-  
-
   return (
-
-
-    <div className='app-container'>
-    <Header />
-    <div className="content-container">
+    <div className="app-container">
+      <Header />
+      <div className="content-container">
         <SidePanel />
         <div className="main-content">
-
-        <div>
-      <h2>Project Schedule</h2>
-      <button onClick={() => setShowModal(true)}>Add New Event</button>
-      <Calendar
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 500 }}
-        onSelectEvent={handleSelectEvent}
-        view={view}
-        onView={(newView) => setView(newView)}
-        date={date}
-        onNavigate={(newDate) => setDate(newDate)}
-      />
-
-      {showModal && (
-        <div style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          background: '#fff',
-          padding: '20px',
-          zIndex: 1000,
-        }}>
-          <h3>Add New Event</h3>
-          <input
-            type="text"
-            placeholder="Title"
-            value={newEvent.title}
-            onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-          />
-          <textarea
-            placeholder="Description"
-            value={newEvent.description}
-            onChange={(e) =>
-              setNewEvent({ ...newEvent, description: e.target.value })
-            }
-          />
-          <label>Start Time:</label>
-          <input
-            type="datetime-local"
-            value={newEvent.start_time}
-            onChange={(e) =>
-              setNewEvent({ ...newEvent, start_time: e.target.value })
-            }
-          />
-          <label>End Time:</label>
-          <input
-            type="datetime-local"
-            value={newEvent.end_time}
-            onChange={(e) =>
-              setNewEvent({ ...newEvent, end_time: e.target.value })
-            }
-          />
-          <button onClick={handleAddEvent}>Save</button>
-          <button onClick={() => setShowModal(false)}>Cancel</button>
-        </div>
-      )}
-
-      {/* Modal szczegółów wydarzenia */}
-      {showDetailsModal && selectedEvent && (
-        <div style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          background: '#fff',
-          padding: '20px',
-          zIndex: 1000,
-        }}>
-          <h3>Event Details</h3>
-          <p><strong>Title:</strong> {selectedEvent.title}</p>
-          <p><strong>Description:</strong> {selectedEvent.description}</p>
-          <p><strong>Start:</strong> {selectedEvent.start.toLocaleString()}</p>
-          <p><strong>End:</strong> {selectedEvent.end.toLocaleString()}</p>
-          <p><strong>Attendees:</strong></p>
-          <ul>
-  {selectedEvent.attendees.map((attendee) => (
-    <li
-      key={attendee.id}
-      style={{
-        fontWeight: attendee.id === user_id ? "bold" : "normal",
-        color: attendee.id === user_id ? "#007bff" : "#000",
-      }}
-    >
-      {attendee.full_name}
-    </li>
-  ))}
-</ul>
-
-          <button onClick={toggleAttendance}>
-          {selectedEvent.isAttending ? "Cancel Attendance" : "Join Event"}
+          <h2 className="schedules-header">Project Schedule</h2>
+          <button
+            className="add-event-button"
+            onClick={() => setShowModal(true)}
+          >
+            Add New Event
           </button>
-          <button onClick={() => setShowDetailsModal(false)}>Close</button>
-        </div>
-      )}
-    </div>
-        </div>
-    </div>
-    <Footer />
-</div>
+          <Calendar
+  localizer={localizer}
+  events={events}
+  startAccessor="start"
+  endAccessor="end"
+  style={{
+    height: "100%",
+    borderRadius: "10px",
+    marginTop: "10px",
+  }}
+  onSelectEvent={(event) => {
+    setSelectedEvent(event);
+    setShowDetailsModal(true);
+  }}
+  view={view}
+  onView={(newView) => setView(newView)}
+  date={date}
+  onNavigate={(newDate) => setDate(newDate)}
+/>
 
+  
+          {/* Modal: Dodawanie nowego wydarzenia */}
+          {showModal && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <h3>Add New Event</h3>
+                <input
+                  type="text"
+                  placeholder="Title"
+                  value={newEvent.title}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, title: e.target.value })
+                  }
+                />
+                <textarea
+                  placeholder="Description"
+                  value={newEvent.description}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, description: e.target.value })
+                  }
+                />
+                <input
+                  type="datetime-local"
+                  value={newEvent.start_time}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, start_time: e.target.value })
+                  }
+                />
+                <input
+                  type="datetime-local"
+                  value={newEvent.end_time}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, end_time: e.target.value })
+                  }
+                />
+                <button onClick={handleAddEvent}>Save</button>
+                <button onClick={() => setShowModal(false)}>Cancel</button>
+              </div>
+            </div>
+          )}
+  
+          {/* Modal: Szczegóły wydarzenia */}
+          {showDetailsModal && selectedEvent && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <button
+                  onClick={() => setShowDetailsModal(false)}
+                  style={{ float: "right", marginBottom: "10px" }}
+                >
+                  Close
+                </button>
+                <h3>Event Details</h3>
+                <p>
+                  <strong>Title:</strong> {selectedEvent.title}
+                </p>
+                <p>
+                  <strong>Description:</strong> {selectedEvent.description}
+                </p>
+                <p>
+                  <strong>Start:</strong> {selectedEvent.start.toLocaleString()}
+                </p>
+                <p>
+                  <strong>End:</strong> {selectedEvent.end.toLocaleString()}
+                </p>
+                <button onClick={toggleAttendance}>
+                  {selectedEvent.isAttending ? "Cancel Attendance" : "Join Event"}
+                </button>
+                <p>
+                  <strong>Attendees:</strong>
+                </p>
+                <ul>
+                  {selectedEvent.attendees.map((attendee) => (
+                    <li
+                      key={attendee.id}
+                      style={{
+                        fontWeight: attendee.id === user_id ? "bold" : "normal",
+                        color: attendee.id === user_id ? "#007bff" : "#000",
+                      }}
+                    >
+                      {attendee.full_name}
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+        onClick={() => handleDeleteEvent(selectedEvent.id)}
+        style={{ backgroundColor: "red", color: "white" }}
+      >
+        Delete Event
+      </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+      <Footer />
+    </div>
   );
 };
 

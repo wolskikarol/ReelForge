@@ -1,0 +1,121 @@
+.custom-modal {
+    position: relative;
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: var(--color-neutral);
+    border: 1px solid var(--color-accent);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    outline: none;
+  }
+  
+  .custom-overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .close-modal-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--color-dark);
+  }
+  
+  .add-script-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: var(--color-neutral);
+    border: 1px solid var(--color-accent);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .add-script-container h2 {
+    font-size: 1.5rem;
+    color: var(--color-dark);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .add-script-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .add-script-form label {
+    font-size: 1rem;
+    color: var(--color-dark);
+    margin-bottom: 5px;
+  }
+  
+  .add-script-form input,
+  .add-script-form textarea {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid var(--color-accent);
+    border-radius: 5px;
+    background-color: var(--color-base);
+  }
+  
+  .add-script-form textarea {
+    resize: vertical;
+    height: 150px;
+  }
+  
+  .add-script-form button {
+    align-self: flex-start;
+    background-color: var(--color-accent);
+    color: var(--color-neutral);
+    font-size: 1rem;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .add-script-form button:hover {
+    background-color: var(--color-highlight);
+    color: var(--color-dark);
+  }
+  
+  .add-script-message {
+    text-align: center;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+  
+  .add-script-message.success {
+    color: var(--color-contrast);
+  }
+  
+  .add-script-message.error {
+    color: var(--color-delete);
+  }
+  
+  @media (max-width: 768px) {
+    .add-script-container {
+      padding: 15px;
+    }
+  
+    .add-script-form input,
+    .add-script-form textarea {
+      font-size: 0.9rem;
+      padding: 8px;
+    }
+  
+    .add-script-form button {
+      font-size: 0.9rem;
+      padding: 8px 12px;
+    }
+  }
+  

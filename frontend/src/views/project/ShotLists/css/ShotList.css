@@ -1,0 +1,122 @@
+.shot-list-container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: var(--color-neutral);
+    border: 1px solid var(--color-accent);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.shot-list-header {
+    text-align: center;
+    font-size: 1.8rem;
+    color: var(--color-dark);
+    margin-bottom: 20px;
+}
+
+.shot-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.shot-list-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: var(--color-neutral);
+    border: 1px solid var(--color-accent);
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.shot-list-item:hover {
+    transform: scale(1.02);
+}
+
+.shot-list-item strong {
+    font-size: 1.2rem;
+}
+
+.shot-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.shot-actions button {
+    background-color: var(--color-accent);
+    color: var(--color-neutral);
+    border: none;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.shot-actions button:hover {
+    background-color: var(--color-highlight);
+    color: var(--color-dark);
+}
+
+.shot-actions .delete-button {
+    background-color: var(--color-delete);
+    color: var(--color-neutral);
+    border: none;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.shot-actions button:hover {
+    background-color: var(--color-highlight);
+    color: var(--color-dark);
+}
+
+.form-container {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: var(--color-base);
+    border: 1px solid var(--color-accent);
+    border-radius: 5px;
+}
+
+.form-container h3 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: var(--color-dark);
+}
+
+.form-container input,
+.form-container textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    border: 1px solid var(--color-accent);
+    border-radius: 5px;
+    background-color: var(--color-neutral);
+}
+
+.form-container button {
+    background-color: var(--color-accent);
+    color: var(--color-neutral);
+    font-size: 1rem;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-container button:hover {
+    background-color: var(--color-highlight);
+    color: var(--color-dark);
+}

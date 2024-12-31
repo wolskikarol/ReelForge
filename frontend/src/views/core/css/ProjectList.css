@@ -1,0 +1,97 @@
+.project-list-container {
+    padding: 20px;
+    background-color: var(--color-base);
+    color: var(--color-dark);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.project-list-title {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--color-dark);
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.project-card {
+    background: var(--color-neutral);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.project-title {
+    font-size: 1.5rem;
+    color: var(--color-accent);
+    margin-bottom: 10px;
+}
+
+.project-description {
+    font-size: 1rem;
+    color: var(--color-dark);
+    margin-bottom: 15px;
+}
+
+.project-link {
+    text-decoration: none;
+    color: var(--color-highlight);
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.project-link:hover {
+    color: var(--color-accent);
+}
+
+.loading, .error {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--color-dark);
+}
+
+.no-projects {
+    text-align: center;
+    font-size: 1rem;
+    color: var(--color-dark);
+}
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination-button {
+    background-color: var(--color-accent);
+    color: var(--color-neutral);
+    border: none;
+    padding: 10px 15px;
+    margin: 0 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-button:disabled {
+    background-color: var(--color-neutral);
+    color: var(--color-dark);
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    font-size: 1rem;
+    color: var(--color-dark);
+}

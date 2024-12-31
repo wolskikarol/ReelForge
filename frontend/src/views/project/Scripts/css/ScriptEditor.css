@@ -1,0 +1,92 @@
+.script-editor-container {
+    width: 90%;
+    height: calc(100vh - 100px);
+    margin: 50px auto;
+    padding: 20px;
+    background-color: var(--color-neutral);
+    border: 1px solid var(--color-accent);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.script-editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+.script-editor-toolbar button {
+    background-color: var(--color-accent);
+    color: var(--color-neutral);
+    border: none;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    white-space: nowrap;
+}
+
+.script-editor-toolbar button:hover {
+    background-color: var(--color-highlight);
+    color: var(--color-dark);
+    transform: scale(1.05);
+}
+
+
+.script-editor-content {
+    flex-grow: 1;
+    padding: 20px;
+    border: 1px solid var(--color-accent);
+    border-radius: 5px;
+    min-height: 300px;
+    background-color: white;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 1rem;
+    line-height: 1.5;
+    overflow-y: auto;
+    resize: none;
+}
+
+.loading-message,
+.error-message {
+    text-align: center;
+    font-size: 1.2rem;
+    margin: 20px 0;
+}
+
+.error-message {
+    color: var(--color-delete);
+}
+
+.loading-message {
+    color: var(--color-contrast);
+}
+
+
+@media (max-width: 1200px) {
+    .script-editor-container {
+        width: 95%;
+        height: calc(100vh - 50px);
+        padding: 15px;
+    }
+
+    .script-editor-toolbar {
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .script-editor-toolbar button {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+
+    .script-editor-content {
+        min-height: 300px;
+        background-color: white;
+    }
+}

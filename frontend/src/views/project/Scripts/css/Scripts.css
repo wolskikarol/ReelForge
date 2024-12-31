@@ -1,0 +1,93 @@
+.scripts-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: var(--color-neutral);
+    border: 1px solid var(--color-accent);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.scripts-container h1 {
+    color: var(--color-dark);
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.scripts-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.scripts-list li {
+    padding: 15px;
+    margin: 10px 0;
+    border: 1px solid var(--color-accent);
+    border-radius: 5px;
+    background-color: var(--color-base);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.scripts-list li:hover {
+    background-color: var(--color-highlight);
+    color: var(--color-dark);
+    transform: scale(1.02);
+}
+
+.scripts-list h2 {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.scripts-list small {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: var(--color-dark);
+}
+
+.pagination-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.pagination-buttons button {
+    background-color: var(--color-accent);
+    color: var(--color-neutral);
+    font-size: 1rem;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pagination-buttons button:hover {
+    background-color: var(--color-highlight);
+    color: var(--color-dark);
+}
+
+.error-message, .loading-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--color-delete);
+    margin: 20px 0;
+}
+
+@media (max-width: 768px) {
+    .scripts-container {
+        padding: 15px;
+    }
+
+    .scripts-list li {
+        padding: 10px;
+    }
+
+    .pagination-buttons button {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+}

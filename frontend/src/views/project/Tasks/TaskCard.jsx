@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDrag } from "react-dnd";
+import "./css/TaskCard.css";
 
 const TaskCard = ({ task, projectUsers, onDelete, onEdit, onAssign }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -16,28 +17,16 @@ const TaskCard = ({ task, projectUsers, onDelete, onEdit, onAssign }) => {
   return (
     <div
       ref={drag}
-      className="task-card"
-      style={{
-        opacity: isDragging ? 0.5 : 1,
-        border: "1px solid gray",
-        padding: "8px",
-        margin: "8px",
-        backgroundColor: "white",
-        borderRadius: "5px",
-        cursor: "pointer",
-        maxWidth: "250px",
-      }}
+      className={`task-card ${isDragging ? "dragging" : ""}`}
       onClick={() => setIsExpanded(!isExpanded)}
     >
-      <div>
+      <div className="task-card-header">
         <strong>{task.title}</strong>
-        <p style={{ fontSize: "12px", color: "#555" }}>
-          Assigned to: {assignedUser ? assignedUser.full_name || assignedUser.email : "Unassigned"}
-        </p>
+        <p>Assigned to: {assignedUser ? assignedUser.full_name || assignedUser.email : "Unassigned"}</p>
       </div>
 
       {isExpanded && (
-        <div style={{ marginTop: "8px", fontSize: "12px" }}>
+        <div className="task-card-expanded">
           <p><strong>Description:</strong> {task.description}</p>
           <p><strong>Status:</strong> {task.status}</p>
           <select
@@ -45,26 +34,16 @@ const TaskCard = ({ task, projectUsers, onDelete, onEdit, onAssign }) => {
             onChange={(e) => onAssign(task.id, e.target.value)}
             defaultValue={task.assigned_to || ""}
           >
-            <option value="" disabled>
-              Assign user
-            </option>
+            <option value="" disabled>Assign user</option>
             {projectUsers.map((user) => (
               <option key={user.id} value={user.id}>
                 {user.full_name || user.email}
               </option>
             ))}
           </select>
-          <div style={{ marginTop: "8px" }}>
+          <div className="task-card-buttons">
             <button
-              style={{
-                padding: "4px 8px",
-                marginRight: "4px",
-                backgroundColor: "#007bff",
-                color: "white",
-                border: "none",
-                borderRadius: "3px",
-                cursor: "pointer",
-              }}
+              className="edit"
               onClick={(e) => {
                 e.stopPropagation();
                 onEdit(task);
@@ -73,14 +52,7 @@ const TaskCard = ({ task, projectUsers, onDelete, onEdit, onAssign }) => {
               Edit
             </button>
             <button
-              style={{
-                padding: "4px 8px",
-                backgroundColor: "#dc3545",
-                color: "white",
-                border: "none",
-                borderRadius: "3px",
-                cursor: "pointer",
-              }}
+              className="delete-button"
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(task.id);

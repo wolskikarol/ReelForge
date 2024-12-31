@@ -1,39 +1,57 @@
 import React, { useState } from "react";
 import Header from "../partials/Header";
 import Footer from "../partials/Footer";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import apiInstance from "../../utils/axios";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/auth";
-import { login, register } from "../../utils/auth";
+import { login } from "../../utils/auth";
+import "./css/Login.css";
 
 function Login() {
     const [bioData, setBioData] = useState({ email: "", password: "" });
     const [isLoading, setIsLoading] = useState(false);
-    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [fieldErrors, setFieldErrors] = useState({ email: "", password: "" });
     const navigate = useNavigate();
 
-    const handleBioDataChange = (event) => {
+    const validateFields = () => {
+        const errors = {};
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!bioData.email) {
+            errors.email = "Email is required.";
+        } else if (!emailRegex.test(bioData.email)) {
+            errors.email = "Invalid email format.";
+        }
+
+        if (!bioData.password) {
+            errors.password = "Password is required.";
+        }
+
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    const handleInputChange = (event) => {
         setBioData({
             ...bioData,
             [event.target.name]: event.target.value,
         });
-    };
-
-    const resetForm = () => {
-        setBioData({
-            email: "",
-            password: "",
-        });
+        setFieldErrors({ ...fieldErrors, [event.target.name]: "" });
     };
 
     const handleLogin = async (e) => {
         e.preventDefault();
+
+        if (!validateFields()) {
+            return;
+        }
+
         setIsLoading(true);
+        setErrorMessage("");
 
         const { error } = await login(bioData.email, bioData.password);
         if (error) {
-            alert(JSON.stringify(error));
-            resetForm();
+            setErrorMessage("Invalid email or password. Please try again.");
         } else {
             navigate("/");
         }
@@ -44,71 +62,48 @@ function Login() {
     return (
         <>
             <Header />
-            <section className="container d-flex flex-column vh-100" style={{ marginTop: "150px" }}>
-                <div className="row align-items-center justify-content-center g-0 h-lg-100 py-8">
-                    <div className="col-lg-5 col-md-8 py-8 py-xl-0">
-                        <div className="card shadow">
-                            <div className="card-body p-6">
-                                <div className="mb-4">
-                                    <h1 className="mb-1 fw-bold">Sign in</h1>
-                                    <span>
-                                        Don’t have an account?
-                                        <Link to="/register/" className="ms-1">
-                                            Sign up
-                                        </Link>
-                                    </span>
-                                </div>
-                                {/* Form */}
-                                <form className="needs-validation" noValidate="" onSubmit={handleLogin}>
-                                    {/* Username */}
-                                    <div className="mb-3">
-                                        <label htmlFor="email" className="form-label">
-                                            Email Address
-                                        </label>
-                                        <input type="email" onChange={handleBioDataChange} value={bioData.email} id="email" className="form-control" name="email" placeholder="johndoe@gmail.com" required="" />
-                                        <div className="invalid-feedback">Please enter valid username.</div>
-                                    </div>
-                                    {/* Password */}
-                                    <div className="mb-3">
-                                        <label htmlFor="password" className="form-label">
-                                            Password
-                                        </label>
-                                        <input type="password" onChange={handleBioDataChange} value={bioData.password} id="password" className="form-control" name="password" placeholder="**************" required="" />
-                                        <div className="invalid-feedback">Please enter valid password.</div>
-                                    </div>
-                                    {/* Checkbox */}
-                                    <div className="d-lg-flex justify-content-between align-items-center mb-4">
-                                        <div className="form-check">
-                                            <input type="checkbox" className="form-check-input" id="rememberme" required="" />
-                                            <label className="form-check-label" htmlFor="rememberme">
-                                                Remember me
-                                            </label>
-                                            <div className="invalid-feedback">You must agree before submitting.</div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className="d-grid">
-                                            <button className="btn btn-primary w-100" type="submit" disabled={isLoading}>
-                                                {isLoading ? (
-                                                    <>
-                                                        <span className="mr-2 ">Processing...</span>
-                                                        <i className="fas fa-spinner fa-spin" />
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <span className="mr-2">Sign In </span>
-                                                        <i className="fas fa-sign-in-alt" />
-                                                    </>
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+            <main className="login-container">
+                <div className="login-card">
+                    <h1>Sign In</h1>
+                    {errorMessage && <div className="error-message">{errorMessage}</div>}
+                    <form onSubmit={handleLogin} noValidate>
+                        <div className="form-group">
+                            <label htmlFor="email">Email Address</label>
+                            <input
+                                type="email"
+                                name="email"
+                                id="email"
+                                value={bioData.email}
+                                onChange={handleInputChange}
+                                placeholder="johndoe@gmail.com"
+                                className={fieldErrors.email ? "input-error" : ""}
+                                required
+                            />
+                            {fieldErrors.email && <div className="field-error">{fieldErrors.email}</div>}
                         </div>
-                    </div>
+                        <div className="form-group">
+                            <label htmlFor="password">Password</label>
+                            <input
+                                type="password"
+                                name="password"
+                                id="password"
+                                value={bioData.password}
+                                onChange={handleInputChange}
+                                placeholder="••••••••"
+                                className={fieldErrors.password ? "input-error" : ""}
+                                required
+                            />
+                            {fieldErrors.password && <div className="field-error">{fieldErrors.password}</div>}
+                        </div>
+                        <button type="submit" className="btn-submit" disabled={isLoading}>
+                            {isLoading ? "Processing..." : "Sign In"}
+                        </button>
+                    </form>
+                    <p className="signup-link">
+                        Don’t have an account? <Link to="/register/">Sign up</Link>
+                    </p>
                 </div>
-            </section>
+            </main>
             <Footer />
         </>
     );

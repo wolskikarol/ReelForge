@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 const AddMemberForm = ({ projectId, onMemberAdded }) => {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
+    const [messageType, setMessageType] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -13,6 +14,7 @@ const AddMemberForm = ({ projectId, onMemberAdded }) => {
             const token = Cookies.get('access_token');
             if (!token) {
                 setMessage('You must be logged in!');
+                setMessageType('error');
                 return;
             }
     
@@ -29,15 +31,18 @@ const AddMemberForm = ({ projectId, onMemberAdded }) => {
             const newMember = response.data;
             onMemberAdded(newMember);
             setEmail('');
+            setMessage('Member added successfully!');
+            setMessageType('success');
         } catch (err) {
             setMessage('Failed to add member.');
+            setMessageType('error');
         }
     };
 
     return (
-        <div>
+        <div className="add-member-container">
             <h4>Add Project Member</h4>
-            <form onSubmit={handleSubmit}>
+            <form className="add-member-form" onSubmit={handleSubmit}>
                 <input
                     type="email"
                     placeholder="User Email"
@@ -47,9 +52,14 @@ const AddMemberForm = ({ projectId, onMemberAdded }) => {
                 />
                 <button type="submit">Add</button>
             </form>
-            {message && <p>{message}</p>}
+            {message && (
+                <p className={`add-member-message ${messageType}`}>
+                    {message}
+                </p>
+            )}
         </div>
     );
 };
 
 export default AddMemberForm;
+

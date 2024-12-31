@@ -1,0 +1,135 @@
+:root {
+  --color-base: #e1d5c9;
+  --color-dark: #202224;
+  --color-accent: #c29450;
+  --color-contrast: #276678;
+  --color-neutral: #f5f1e3;
+  --color-highlight: #ffc857;
+  --color-delete: #7a1c00;
+}
+
+body {
+  background-color: var(--color-base);
+  color: var(--color-dark);
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: var(--color-dark);
+  color: var(--color-neutral);
+  padding: 10px 20px;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+footer {
+  background-color: var(--color-dark);
+  color: var(--color-neutral);
+  padding: 10px 20px;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+button {
+  background-color: var(--color-accent);
+  color: var(--color-neutral);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: var(--color-highlight);
+  color: var(--color-dark);
+}
+
+.delete-button {
+  background-color: var(--color-delete);
+  color: var(--color-accent);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: var(--color-highlight);
+  color: var(--color-dark);
+}
+
+.sidepanel {
+  position: fixed;
+  top: 60px;
+  bottom: 40px;
+  left: 0;
+  width: 250px;
+  background-color: var(--color-dark);
+  color: var(--color-neutral);
+  border-right: 1px solid var(--color-accent);
+  overflow-y: auto;
+}
+
+.sidepanel-header {
+  margin-top: 20px; 
+  padding: 15px;
+  border-bottom: 1px solid var(--color-accent);
+}
+
+.sidepanel-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidepanel-nav li {
+  margin: 0;
+}
+
+.sidepanel-nav a {
+  display: block;
+  padding: 10px 15px;
+  color: var(--color-neutral);
+  text-decoration: none;
+}
+
+.sidepanel-nav a:hover {
+  background-color: var(--color-accent);
+  color: var(--color-dark);
+}
+
+.main-content {
+  margin-left: 250px;
+  margin-top: 100px;
+  margin-bottom: 40px;
+  padding: 20px;
+}
+
+.content-container {
+  display: flex;
+  height: calc(100vh - 100px);
+}
+
+@media (max-width: 768px) {
+  .sidepanel {
+    width: 100%;
+    position: relative;
+    top: 0;
+    bottom: 0;
+    height: auto;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}

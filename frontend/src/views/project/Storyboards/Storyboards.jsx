@@ -5,13 +5,17 @@ import Cookies from "js-cookie";
 import Modal from "react-modal";
 import "react-medium-image-zoom/dist/styles.css";
 import Zoom from "react-medium-image-zoom";
+import Header from "../../partials/Header";
+import Footer from "../../partials/Footer";
+import SidePanel from "../../partials/SidePanel"
+import "./css/Storyboards.css"
 
 Modal.setAppElement("#root");
 
 const Storyboards = () => {
-  const { projectid } = useParams(); // Pobranie ID projektu z URL
-  const [storyboards, setStoryboards] = useState([]); // Przechowywanie listy scenorysów
-  const [selectedStoryboard, setSelectedStoryboard] = useState(null); // Wybrany scenorys do podglądu
+  const { projectid } = useParams();
+  const [storyboards, setStoryboards] = useState([]);
+  const [selectedStoryboard, setSelectedStoryboard] = useState(null);
   const [newStoryboard, setNewStoryboard] = useState({
     title: "",
     description: "",
@@ -21,7 +25,6 @@ const Storyboards = () => {
   const [formModalIsOpen, setFormModalIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  // Pobieranie scenorysów z API
   useEffect(() => {
     axios
       .get(`http://localhost:8000/api/v1/project/${projectid}/storyboards/`, {
@@ -30,7 +33,6 @@ const Storyboards = () => {
         },
       })
       .then((response) => {
-        // Wyodrębnienie danych z "results"
         setStoryboards(response.data.results || []);
       })
       .catch((error) => console.error("Error fetching storyboards:", error));
@@ -44,8 +46,10 @@ const Storyboards = () => {
     const formData = new FormData();
     formData.append("title", newStoryboard.title);
     formData.append("description", newStoryboard.description);
-    formData.append("image", newStoryboard.image);
-
+    formData.append("project", projectid);
+    if (newStoryboard.image) {
+      formData.append("image", newStoryboard.image);
+    }
     axios
       .post(
         `http://localhost:8000/api/v1/project/${projectid}/storyboards/`,
@@ -76,7 +80,6 @@ const Storyboards = () => {
     formData.append("title", newStoryboard.title);
     formData.append("description", newStoryboard.description);
   
-    // Dodaj obraz tylko wtedy, gdy został wybrany
     if (newStoryboard.image) {
       formData.append("image", newStoryboard.image);
     }
@@ -99,7 +102,6 @@ const Storyboards = () => {
           )
         );
   
-        // Ustaw zaktualizowany scenorys w modalnym oknie
         setSelectedStoryboard(response.data);
   
         setFormModalIsOpen(false);
@@ -111,8 +113,6 @@ const Storyboards = () => {
   };
   
   
-  
-
   const handleDeleteStoryboard = (id) => {
     axios
       .delete(`http://localhost:8000/api/v1/project/${projectid}/storyboards/${id}/`, {
@@ -130,82 +130,90 @@ const Storyboards = () => {
   };
 
   return (
-    <div>
-      <h2>Storyboards</h2>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-          gap: "20px",
-        }}
-      >
-        {storyboards.map((storyboard) => (
-          <div
-            key={storyboard.id}
-            style={{
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              overflow: "hidden",
-              cursor: "pointer",
-            }}
+
+    <div className='app-container'>
+    <Header />
+    <div className="content-container">
+        <SidePanel />
+        <div className="main-content">
+
+        <h2 className="storyboards-header">Storyboards</h2>
+          <div className="storyboards-grid">
+            {storyboards.map((storyboard) => (
+              <div
+                className="storyboard-card"
+                key={storyboard.id}
+                onClick={() => {
+                  setSelectedStoryboard(storyboard);
+                  setModalIsOpen(true);
+                }}
+              >
+                {storyboard.image ? (
+  <img
+    src={storyboard.image}
+    alt={storyboard.title}
+    className="storyboard-image"
+  />
+) : (
+  <div className="storyboard-placeholder">
+    <span>No Image Available</span>
+  </div>
+)}
+                <h4>{storyboard.title}</h4>
+              </div>
+            ))}
+          </div>
+          <button
+            className="add-storyboard-button"
             onClick={() => {
-              setSelectedStoryboard(storyboard);
-              setModalIsOpen(true);
+              setNewStoryboard({
+                title: "",
+                description: "",
+                image: null,
+              });
+              setIsEditing(false);
+              setFormModalIsOpen(true);
             }}
           >
-            <img
-              src={storyboard.image}
-              alt={storyboard.title}
-              style={{ width: "100%", height: "150px", objectFit: "cover" }}
-            />
-            <h4 style={{ textAlign: "center", margin: "10px 0" }}>
-              {storyboard.title}
-            </h4>
-          </div>
-        ))}
-      </div>
-      <button
-        onClick={() => {
-          setNewStoryboard({
-            title: "",
-            description: "",
-            image: null,
-          });
-          setIsEditing(false);
-          setFormModalIsOpen(true);
-        }}
-        style={{ marginTop: "20px" }}
-      >
-        Add Storyboard
-      </button>
+            Add Storyboard
+          </button>
 
       {modalIsOpen && selectedStoryboard && (
         <Modal
-          isOpen={modalIsOpen}
-          onRequestClose={() => setModalIsOpen(false)}
-          style={{
-            content: {
-              maxWidth: "600px",
-              margin: "auto",
-              borderRadius: "8px",
-            },
-          }}
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        overlayClassName="ReactModal__Overlay"
+        className="ReactModal__Content"
+      >
+        <button
+          onClick={() => setModalIsOpen(false)}
+          style={{ float: "right", marginBottom: "10px" }}
         >
-          <button onClick={() => setModalIsOpen(false)} style={{ float: "right" }}>
-            Close
-          </button>
-          <h3>{selectedStoryboard.title}</h3>
-          <Zoom>
-            <img
-              src={selectedStoryboard.image}
-              alt={selectedStoryboard.title}
-              style={{ width: "100%", height: "auto", borderRadius: "8px" }}
-            />
-          </Zoom>
-          <p>{selectedStoryboard.description}</p>
-          <p><strong>Created at:</strong> {new Date(selectedStoryboard.created_at).toLocaleString()}</p>
-          <p><strong>Updated at:</strong> {new Date(selectedStoryboard.updated_at).toLocaleString()}</p>
-
+          Close
+        </button>
+        <h3>{selectedStoryboard?.title}</h3>
+        <Zoom>
+          <img
+            src={selectedStoryboard?.image}
+            alt={selectedStoryboard?.title}
+            style={{
+              width: "100%",
+              height: "auto",
+              borderRadius: "8px",
+              marginBottom: "10px",
+            }}
+          />
+        </Zoom>
+        <p>{selectedStoryboard?.description}</p>
+        <p>
+          <strong>Created at:</strong>{" "}
+          {new Date(selectedStoryboard?.created_at).toLocaleString()}
+        </p>
+        <p>
+          <strong>Updated at:</strong>{" "}
+          {new Date(selectedStoryboard?.updated_at).toLocaleString()}
+        </p>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <button
             onClick={() => {
               setNewStoryboard({
@@ -216,60 +224,125 @@ const Storyboards = () => {
               setIsEditing(true);
               setFormModalIsOpen(true);
             }}
-            style={{ marginRight: "10px" }}
           >
             Edit
           </button>
           <button
+            className="delete-button"
             onClick={() => handleDeleteStoryboard(selectedStoryboard.id)}
-            style={{ backgroundColor: "red", color: "white" }}
           >
             Delete
           </button>
-        </Modal>
+        </div>
+      </Modal>
+      
       )}
 
       {formModalIsOpen && (
         <Modal
-          isOpen={formModalIsOpen}
-          onRequestClose={() => setFormModalIsOpen(false)}
-          style={{
-            content: {
-              maxWidth: "600px",
-              margin: "auto",
-              borderRadius: "8px",
-            },
-          }}
-        >
-          <button onClick={() => setFormModalIsOpen(false)} style={{ float: "right" }}>
-            Close
-          </button>
-          <h3>{isEditing ? "Edit Storyboard" : "Add Storyboard"}</h3>
-          <input
-            type="text"
-            placeholder="Title"
-            value={newStoryboard.title}
-            onChange={(e) =>
-              setNewStoryboard({ ...newStoryboard, title: e.target.value })
-            }
-          />
-          <textarea
-            placeholder="Description"
-            value={newStoryboard.description}
-            onChange={(e) =>
-              setNewStoryboard({ ...newStoryboard, description: e.target.value })
-            }
-          />
-          <input type="file" onChange={handleFileChange} />
-          <button
-            onClick={isEditing ? handleEditStoryboard : handleAddStoryboard}
-            style={{ marginTop: "10px" }}
-          >
-            {isEditing ? "Save Changes" : "Add"}
-          </button>
-        </Modal>
-      )}
+  isOpen={formModalIsOpen}
+  onRequestClose={() => setFormModalIsOpen(false)}
+  overlayClassName="ReactModal__Overlay"
+  className="ReactModal__Content"
+>
+  <button
+    onClick={() => setFormModalIsOpen(false)}
+    style={{ float: "right", marginBottom: "10px" }}
+  >
+    Close
+  </button>
+  <h3 style={{ marginBottom: "20px" }}>
+    {isEditing ? "Edit Storyboard" : "Add Storyboard"}
+  </h3>
+  <form
+    onSubmit={(e) => {
+      e.preventDefault();
+      isEditing ? handleEditStoryboard() : handleAddStoryboard();
+    }}
+  >
+    <div style={{ marginBottom: "15px" }}>
+      <label htmlFor="title" style={{ display: "block", marginBottom: "5px" }}>
+        Title
+      </label>
+      <input
+        id="title"
+        type="text"
+        placeholder="Enter storyboard title"
+        value={newStoryboard.title}
+        onChange={(e) =>
+          setNewStoryboard({ ...newStoryboard, title: e.target.value })
+        }
+        style={{
+          width: "100%",
+          padding: "10px",
+          border: "1px solid var(--color-accent)",
+          borderRadius: "5px",
+        }}
+        required
+      />
     </div>
+    <div style={{ marginBottom: "15px" }}>
+      <label
+        htmlFor="description"
+        style={{ display: "block", marginBottom: "5px" }}
+      >
+        Description
+      </label>
+      <textarea
+        id="description"
+        placeholder="Enter storyboard description"
+        value={newStoryboard.description}
+        onChange={(e) =>
+          setNewStoryboard({ ...newStoryboard, description: e.target.value })
+        }
+        style={{
+          width: "100%",
+          padding: "10px",
+          border: "1px solid var(--color-accent)",
+          borderRadius: "5px",
+          minHeight: "100px",
+        }}
+      />
+    </div>
+    <div style={{ marginBottom: "15px" }}>
+      <label htmlFor="image" style={{ display: "block", marginBottom: "5px" }}>
+        Image
+      </label>
+      <input
+        id="image"
+        type="file"
+        onChange={handleFileChange}
+        style={{
+          padding: "5px",
+          border: "1px solid var(--color-accent)",
+          borderRadius: "5px",
+          backgroundColor: "#e1d5c9",
+        }}
+      />
+    </div>
+    <button
+      type="submit"
+      style={{
+        backgroundColor: "#c29450",
+        color: "#f5f1e3",
+        padding: "10px 15px",
+        borderRadius: "5px",
+        border: "none",
+        cursor: "pointer",
+        transition: "background-color 0.3s ease",
+      }}
+    >
+      {isEditing ? "Save Changes" : "Add Storyboard"}
+    </button>
+  </form>
+</Modal>
+
+      )}
+        </div>
+    </div>
+    <Footer />
+</div>
+
   );
 };
 

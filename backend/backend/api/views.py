@@ -246,6 +246,17 @@ class ScriptDetailView(generics.RetrieveUpdateAPIView):
 
             return Response(serializer.data, status=status.HTTP_200_OK)
     
+class ScriptDeleteView(generics.RetrieveDestroyAPIView):
+    queryset = api_models.Script.objects.all()
+    serializer_class = api_serializer.ScriptSerializer
+    permission_classes = [IsAuthenticated, IsAuthorOrMemberDetails]
+    lookup_field = 'id'
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"detail": "Scenariusz został usunięty."}, status=status.HTTP_204_NO_CONTENT)
+
 
 class ShotListCreateView(generics.ListCreateAPIView):
     serializer_class = api_serializer.ShotSerializer
@@ -417,6 +428,7 @@ class EventListCreateView(generics.ListCreateAPIView):
 class EventDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = api_serializer.EventSerializer
     permission_classes = [IsAuthenticated, IsAuthorOrMemberDetails]
+    lookup_field = "id"
 
     def get_queryset(self):
         return api_models.Event.objects.filter(project__author=self.request.user)
@@ -483,7 +495,6 @@ class ExpenseDetailView(generics.RetrieveDestroyAPIView):
 
 
 
-# views.py
 class StoryboardListCreateView(generics.ListCreateAPIView):
     serializer_class = api_serializer.StoryboardSerializer
     permission_classes = [IsAuthenticated, IsAuthorOrMemberList]
@@ -495,24 +506,22 @@ class StoryboardListCreateView(generics.ListCreateAPIView):
         return api_models.Storyboard.objects.filter(project_id=project_id)
 
     def create(self, request, *args, **kwargs):
-        project_id = self.kwargs.get('project_id')
-        if not project_id:
-            return Response({"detail": "Project ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+            project_id = self.kwargs.get('project_id')
+            if not project_id:
+                return Response({"detail": "Project ID is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        project = get_object_or_404(api_models.Project, id=project_id)
-        if request.user != project.author and request.user not in project.members.all():
-            return Response(
-                {"detail": "You do not have permission to add storyboards to this project."},
-                status=status.HTTP_403_FORBIDDEN
-            )
+            project = get_object_or_404(api_models.Project, id=project_id)
+            if request.user != project.author and request.user not in project.members.all():
+                return Response(
+                    {"detail": "You do not have permission to add storyboards to this project."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
 
-        data = request.data.copy()
-        data['project'] = project_id
-        data['created_by'] = request.user.id
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            data = request.data.copy()
+            serializer = self.get_serializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(project=project, created_by=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class StoryboardDetailView(generics.RetrieveUpdateDestroyAPIView):

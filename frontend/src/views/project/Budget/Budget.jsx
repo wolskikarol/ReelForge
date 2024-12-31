@@ -17,8 +17,8 @@ import { Doughnut, Bar } from "react-chartjs-2";
 import Header from "../../partials/Header";
 import Footer from "../../partials/Footer";
 import SidePanel from "../../partials/SidePanel";
+import "./css/Budget.css"
 
-// Rejestracja elementów
 ChartJS.register(
   ArcElement,
   Tooltip,
@@ -75,9 +75,9 @@ const Expenses = () => {
         headers: { Authorization: `Bearer ${Cookies.get("access_token")}` },
       })
       .then((response) => {
-        setExpenses(response.data.results); // Pobierz wydatki z "results"
-        setNextPage(response.data.next); // Następna strona
-        setPrevPage(response.data.previous); // Poprzednia strona
+        setExpenses(response.data.results);
+        setNextPage(response.data.next);
+        setPrevPage(response.data.previous);
       })
       .catch((error) => console.error("Error fetching expenses:", error));
   };
@@ -95,9 +95,9 @@ const Expenses = () => {
         }
       )
       .then(() => {
-        fetchExpenses(); // Odśwież wydatki po dodaniu
+        fetchExpenses();
         setNewExpense({ description: "", amount: "", category: "Other" });
-        setIsAddExpenseModalOpen(false); // Zamknij modal
+        setIsAddExpenseModalOpen(false);
       })
       .catch((error) => console.error("Error adding expense:", error));
   };
@@ -115,9 +115,9 @@ const Expenses = () => {
         }
       )
       .then(() => {
-        fetchBudget(); // Odśwież dane budżetu
+        fetchBudget();
         setNewPlannedBudget("");
-        setIsUpdateBudgetModalOpen(false); // Zamknij modal
+        setIsUpdateBudgetModalOpen(false);
       })
       .catch((error) => console.error("Error updating budget:", error));
   };
@@ -134,7 +134,6 @@ const Expenses = () => {
   };
 
   
-    // Przygotowanie danych do wykresów
     const categoryData = expenses.reduce((acc, expense) => {
       acc[expense.category] = (acc[expense.category] || 0) + parseFloat(expense.amount);
       return acc;
@@ -161,18 +160,18 @@ const Expenses = () => {
         },
       ],
     };
-  
-  return (
 
-<div className='app-container'>
-    <Header />
-    <div className="content-container">
-        <SidePanel />
-        <div className="main-content">
-    <div>
-      <h2>Budget</h2>
-      <div>
-        <h3>Planned Budget</h3>
+
+  return (
+<div className="app-container">
+  <Header />
+  <div className="content-container">
+    <SidePanel />
+    <div className="main-content expenses-container">
+      <h2 className="expenses-header">Budget</h2>
+
+      {/* Sekcja podsumowania budżetu */}
+      <div className="budget-summary">
         <p>
           <strong>Total Budget:</strong> {plannedBudget} PLN
         </p>
@@ -182,28 +181,37 @@ const Expenses = () => {
         <p>
           <strong>Remaining Budget:</strong> {summary.remaining_budget} PLN
         </p>
-        <button onClick={() => setIsUpdateBudgetModalOpen(true)}>Update Budget</button>
-        <button onClick={() => setIsAddExpenseModalOpen(true)}>Add Expense</button>
+        <button onClick={() => setIsUpdateBudgetModalOpen(true)}>
+          Update Budget
+        </button>
+        <button onClick={() => setIsAddExpenseModalOpen(true)}>
+          Add Expense
+        </button>
       </div>
 
-      <button onClick={() => setShowCharts(!showCharts)}>
+      {/* Przycisk pokazujący wykresy */}
+      <button
+        className="add-event-button"
+        onClick={() => setShowCharts(!showCharts)}
+      >
         {showCharts ? "Hide Charts" : "Show Charts"}
       </button>
 
+      {/* Sekcja wykresów */}
       {showCharts && (
         <>
-          <div style={{ width: "600px", margin: "20px auto" }}>
+          <div className="chart-container">
             <h3>Budget Overview</h3>
             <Bar data={barData} />
           </div>
-
-          <div style={{ width: "600px", margin: "20px auto" }}>
+          <div className="chart-container">
             <h3>Expenses by Category</h3>
             <Doughnut data={doughnutData} />
           </div>
         </>
       )}
 
+      {/* Sekcja wydatków */}
       <h3>Expenses</h3>
       <div>
         <label htmlFor="filter-category">Filter by Category:</label>
@@ -219,20 +227,27 @@ const Expenses = () => {
           <option value="Other">Other</option>
         </select>
       </div>
-      <ul>
+      <ul className="expenses-list">
         {expenses.map((expense) => (
           <li key={expense.id}>
-            <strong>{expense.description}</strong>: {expense.amount} PLN ({expense.category})
-            <button onClick={() => handleDeleteExpense(expense.id)}>Delete</button>
+            <div>
+              <strong>{expense.description}</strong>: {expense.amount} PLN (
+              {expense.category})
+            </div>
+            <button onClick={() => handleDeleteExpense(expense.id)}>
+              Delete
+            </button>
           </li>
         ))}
       </ul>
 
-      {/* Add Expense Modal */}
+      {/* Modal: Dodawanie wydatku */}
       <Modal
         isOpen={isAddExpenseModalOpen}
         onRequestClose={() => setIsAddExpenseModalOpen(false)}
         contentLabel="Add Expense Modal"
+        className="modal-content"
+        overlayClassName="modal-overlay"
       >
         <h2>Add Expense</h2>
         <input
@@ -266,11 +281,13 @@ const Expenses = () => {
         <button onClick={() => setIsAddExpenseModalOpen(false)}>Cancel</button>
       </Modal>
 
-      {/* Update Budget Modal */}
+      {/* Modal: Aktualizacja budżetu */}
       <Modal
         isOpen={isUpdateBudgetModalOpen}
         onRequestClose={() => setIsUpdateBudgetModalOpen(false)}
         contentLabel="Update Budget Modal"
+        className="modal-content"
+        overlayClassName="modal-overlay"
       >
         <h2>Update Planned Budget</h2>
         <input
@@ -283,11 +300,9 @@ const Expenses = () => {
         <button onClick={() => setIsUpdateBudgetModalOpen(false)}>Cancel</button>
       </Modal>
     </div>
-        </div>
-    </div>
-    <Footer />
+  </div>
+  <Footer />
 </div>
-
   );
 };
 

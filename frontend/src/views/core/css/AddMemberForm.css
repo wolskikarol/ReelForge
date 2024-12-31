@@ -1,0 +1,72 @@
+.add-member-container {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: var(--color-neutral);
+    border: 1px solid var(--color-accent);
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.add-member-container h4 {
+    color: var(--color-dark);
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.add-member-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.add-member-form input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid var(--color-accent);
+    border-radius: 5px;
+    background-color: var(--color-base);
+}
+
+.add-member-form button {
+    align-self: flex-start;
+    background-color: var(--color-accent);
+    color: var(--color-neutral);
+    font-size: 1rem;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-member-form button:hover {
+    background-color: var(--color-highlight);
+    color: var(--color-dark);
+}
+
+.add-member-message {
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.add-member-message.success {
+    color: var(--color-contrast);
+}
+
+.add-member-message.error {
+    color: var(--color-delete);
+}
+@media (max-width: 768px) {
+    .add-member-container {
+        padding: 10px;
+    }
+
+    .add-member-form input {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    .add-member-form button {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+}

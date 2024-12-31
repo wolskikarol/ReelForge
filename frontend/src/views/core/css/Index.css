@@ -1,9 +1,10 @@
 :root {
-    --raisin-black: #1d1a23ff;
-    --antiflash-white: #f0edeeff;
-    --midnight-green: #07393cff;
-    --caribbean-current: #2c666eff;
-    --non-photo-blue: #90ddf0ff;
+    --color-base: #e1d5c9;
+    --color-dark: #202224;
+    --color-accent: #c29450;
+    --color-contrast: #276678;
+    --color-neutral: #f5f1e3;
+    --color-highlight: #ffc857;
 }
 
 .app {
@@ -11,20 +12,21 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background: var(--antiflash-white);
-    color: var(--raisin-black);
+    background: var(--color-base);
+    color: var(--color-dark);
 }
 
 .hero {
-    background: var(--midnight-green);
-    color: var(--antiflash-white);
+    margin-top: 60px;
+    background: var(--color-contrast);
+    color: var(--color-neutral);
     text-align: center;
     padding: 50px 20px;
-    border-bottom: 5px solid var(--caribbean-current);
+    border-bottom: 5px solid var(--color-accent);
 }
 
 .hero-title {
-    color: var(--antiflash-white);
+    color: var(--color-neutral);
     font-size: 2.5rem;
     margin-bottom: 15px;
     animation: fadeInDown 1s ease-out;
@@ -33,25 +35,25 @@
 .hero-description {
     font-size: 1.2rem;
     margin-bottom: 25px;
-    color: var(--non-photo-blue);
+    color: var(--color-highlight);
 }
 
 .hero-button {
     display: inline-block;
-    background: var(--non-photo-blue);
-    color: var(--raisin-black);
+    background: var(--color-highlight);
+    color: var(--color-dark);
     padding: 12px 20px;
     border-radius: 25px;
     font-size: 1rem;
     font-weight: bold;
     text-decoration: none;
     transition: all 0.3s ease;
-    border: 2px solid var(--caribbean-current);
+    border: 2px solid var(--color-accent);
 }
 
 .hero-button:hover {
-    background: var(--caribbean-current);
-    color: var(--antiflash-white);
+    background: var(--color-accent);
+    color: var(--color-neutral);
     transform: scale(1.1);
 }
 
@@ -63,7 +65,7 @@
 .section-title {
     text-align: center;
     font-size: 1.8rem;
-    color: var(--raisin-black);
+    color: var(--color-dark);
     margin-bottom: 20px;
 }
 
@@ -75,7 +77,7 @@
 }
 
 .project-card {
-    background: var(--antiflash-white);
+    background: var(--color-neutral);
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 15px;
@@ -90,18 +92,18 @@
 .project-card-title {
     font-size: 1.2rem;
     font-weight: bold;
-    color: var(--caribbean-current);
+    color: var(--color-accent);
     margin-bottom: 10px;
 }
 
 .project-card-description {
     font-size: 0.9rem;
-    color: var(--raisin-black);
+    color: var(--color-dark);
 }
 
 footer {
-    background: var(--raisin-black);
-    color: var(--antiflash-white);
+    background: var(--color-dark);
+    color: var(--color-neutral);
     text-align: center;
     padding: 15px;
     font-size: 0.8rem;

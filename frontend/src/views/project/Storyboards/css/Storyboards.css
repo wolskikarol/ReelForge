@@ -1,0 +1,175 @@
+.storyboards-container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: var(--color-neutral);
+    border: 1px solid var(--color-accent);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.storyboards-header {
+    text-align: center;
+    font-size: 1.8rem;
+    color: var(--color-dark);
+    margin-bottom: 20px;
+}
+
+.storyboards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.storyboard-card {
+    border: 1px solid var(--color-accent);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.storyboard-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.storyboard-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.storyboard-card h4 {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--color-dark);
+    margin: 10px 0;
+}
+
+.add-storyboard-button {
+    display: inline-block;
+    background-color: var(--color-accent);
+    color: var(--color-neutral);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-storyboard-button:hover {
+    background-color: var(--color-highlight);
+    color: var(--color-dark);
+    transform: scale(1.05);
+}
+
+.modal-content {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: var(--color-neutral);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content h3 {
+    font-size: 1.5rem;
+    color: var(--color-dark);
+    margin-bottom: 15px;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-content label {
+    font-size: 1rem;
+    color: var(--color-dark);
+    margin-bottom: 5px;
+}
+
+.modal-content input,
+.modal-content textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    border: 1px solid var(--color-accent);
+    border-radius: 5px;
+    background-color: var(--color-base);
+}
+
+.modal-content input[type="file"] {
+    padding: 5px;
+}
+
+.modal-content button {
+    background-color: var(--color-accent);
+    color: var(--color-neutral);
+    font-size: 1rem;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.modal-content button:hover {
+    background-color: var(--color-highlight);
+    color: var(--color-dark);
+    transform: scale(1.05);
+}
+
+.modal-content .delete-button {
+    background-color: var(--color-delete);
+    color: var(--color-neutral);
+}
+.ReactModal__Overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ReactModal__Content {
+    position: relative;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90%;
+    margin: auto;
+    background-color: var(--color-neutral);
+    border: 1px solid var(--color-accent);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+    z-index: 1100;
+}
+.storyboard-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    color: #666;
+    font-style: italic;
+    height: 150px;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+  }
+  .storyboard-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  

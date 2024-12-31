@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
-import "./SidePanel.css"
 
 const SidePanel = () => {
   const { projectid } = useParams();
@@ -50,8 +49,13 @@ const SidePanel = () => {
   return (
     <aside className="sidepanel">
       <div className="sidepanel-header">
-        <h2>{projectName}</h2>
-      </div>
+      <h2 
+          className="clickable"
+          onClick={() => navigate(`/project/${projectid}`)}
+          style={{ cursor: "pointer" }}
+        >
+          {projectName}
+        </h2>      </div>
       <nav className="sidepanel-nav">
         <ul>
           <li><Link to={`/project/${projectid}/scripts`}>Scripts</Link></li>

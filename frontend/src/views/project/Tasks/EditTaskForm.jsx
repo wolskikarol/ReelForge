@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./css/EditTaskForm.css";
 
 const EditTaskForm = ({ task, onSave, onCancel }) => {
   const [formData, setFormData] = useState({ ...task });
@@ -9,7 +10,7 @@ const EditTaskForm = ({ task, onSave, onCancel }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: "16px" }}>
+    <form className="edit-task-form" onSubmit={handleSubmit}>
       <input
         type="text"
         placeholder="Task Title"
@@ -20,7 +21,10 @@ const EditTaskForm = ({ task, onSave, onCancel }) => {
       <textarea
         placeholder="Description"
         value={formData.description}
-        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+        onChange={(e) =>
+          setFormData({ ...formData, description: e.target.value })
+        }
+        rows="4"
       />
       <select
         value={formData.status}
@@ -31,10 +35,12 @@ const EditTaskForm = ({ task, onSave, onCancel }) => {
         <option value="in_progress">In Progress</option>
         <option value="done">Done</option>
       </select>
-      <button type="submit">Save Task</button>
-      <button type="button" onClick={onCancel}>
-        Cancel
-      </button>
+      <div>
+        <button type="submit">Save Task</button>
+        <button type="button" className="cancel" onClick={onCancel}>
+          Cancel
+        </button>
+      </div>
     </form>
   );
 };

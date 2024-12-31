@@ -1,0 +1,61 @@
+.logout-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--color-base);
+}
+
+.logout-card {
+    width: 100%;
+    max-width: 400px;
+    background-color: var(--color-neutral);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 1rem;
+    color: var(--color-dark);
+    font-size: 1.8rem;
+}
+
+p {
+    margin-bottom: 2rem;
+    color: var(--color-dark);
+    font-size: 1rem;
+}
+
+.logout-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 150px;
+    padding: 0.75rem;
+    background-color: var(--color-accent);
+    color: var(--color-neutral);
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-highlight);
+}
+
+.btn-primary i {
+    margin-left: 0.5rem;
+    font-size: 0.9rem;
+}
