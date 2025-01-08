@@ -5,12 +5,11 @@ import Cookies from "js-cookie";
 import moment from "moment";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import useUserData from '../../../plugin/useUserData.js';
-import Header from '../../partials/Header.jsx';
-import Footer from '../../partials/Footer.jsx';
-import SidePanel from '../../partials/SidePanel.jsx';
-import "./css/Schedules.css"
-
+import useUserData from "../../../plugin/useUserData.js";
+import Header from "../../partials/Header.jsx";
+import Footer from "../../partials/Footer.jsx";
+import SidePanel from "../../partials/SidePanel.jsx";
+import "./css/Schedules.css";
 
 const Schedules = () => {
   const { projectid } = useParams();
@@ -20,7 +19,7 @@ const Schedules = () => {
     description: "",
     start_time: "",
     end_time: "",
-    attendees:[],
+    attendees: [],
   });
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -30,8 +29,6 @@ const Schedules = () => {
   const [date, setDate] = useState(new Date());
   const [isAttending, setIsAttending] = useState(false);
   const user_id = useUserData().user_id;
-  
-
 
   useEffect(() => {
     axios
@@ -41,26 +38,23 @@ const Schedules = () => {
         },
       })
       .then((response) => {
-  
-        const formattedEvents = response.data.results.map((event) => ({
+        const formattedEvents = response.data.map((event) => ({
           id: event.id,
           title: event.title,
           start: new Date(event.start_time),
           end: new Date(event.end_time),
           description: event.description,
           attendees: event.attendees || [],
-          isAttending: (event.attendees || []).some((attendee) => attendee.id === user_id),
+          isAttending: (event.attendees || []).some(
+            (attendee) => attendee.id === user_id
+          ),
         }));
-  
+
         setEvents(formattedEvents);
         console.log("Formatted Events:", formattedEvents);
       })
       .catch((error) => console.error("Error fetching events:", error));
   }, [projectid]);
-  
-  
-  
-  
 
   const handleAddEvent = () => {
     axios
@@ -90,7 +84,12 @@ const Schedules = () => {
             isAttending: false,
           },
         ]);
-        setNewEvent({ title: "", description: "", start_time: "", end_time: "" });
+        setNewEvent({
+          title: "",
+          description: "",
+          start_time: "",
+          end_time: "",
+        });
         setShowModal(false);
       })
       .catch((error) => console.error("Error adding event:", error));
@@ -98,18 +97,22 @@ const Schedules = () => {
 
   const handleDeleteEvent = (eventId) => {
     axios
-      .delete(`http://localhost:8000/api/v1/project/${projectid}/events/${eventId}/`, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("access_token")}`,
-        },
-      })
+      .delete(
+        `http://localhost:8000/api/v1/project/${projectid}/events/${eventId}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("access_token")}`,
+          },
+        }
+      )
       .then(() => {
-        setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
+        setEvents((prevEvents) =>
+          prevEvents.filter((event) => event.id !== eventId)
+        );
         setShowDetailsModal(false);
       })
       .catch((error) => console.error("Error deleting event:", error));
   };
-  
 
   const handleSelectEvent = (event) => {
     console.log("Selected Event:", event);
@@ -117,8 +120,7 @@ const Schedules = () => {
     setIsAttending(event.isAttending);
     setShowDetailsModal(true);
   };
-  
-  
+
   const toggleAttendance = () => {
     axios
       .post(
@@ -135,31 +137,36 @@ const Schedules = () => {
           id: user_id,
           full_name: useUserData().full_name || "Your Full Name",
         };
-  
+
         const updatedAttendees = selectedEvent.isAttending
-          ? selectedEvent.attendees.filter((attendee) => attendee.id !== user_id)
+          ? selectedEvent.attendees.filter(
+              (attendee) => attendee.id !== user_id
+            )
           : [...selectedEvent.attendees, user];
-  
+
         setSelectedEvent((prevSelectedEvent) => ({
           ...prevSelectedEvent,
           attendees: updatedAttendees,
           isAttending: !prevSelectedEvent.isAttending,
         }));
-  
+
         setEvents((prevEvents) =>
           prevEvents.map((event) =>
             event.id === selectedEvent.id
-              ? { ...event, attendees: updatedAttendees, isAttending: !event.isAttending }
+              ? {
+                  ...event,
+                  attendees: updatedAttendees,
+                  isAttending: !event.isAttending,
+                }
               : event
           )
         );
-  
+
         console.log("Updated attendees:", updatedAttendees);
       })
       .catch((error) => console.error("Error toggling attendance:", error));
   };
-  
-  
+
   return (
     <div className="app-container">
       <Header />
@@ -174,26 +181,25 @@ const Schedules = () => {
             Add New Event
           </button>
           <Calendar
-  localizer={localizer}
-  events={events}
-  startAccessor="start"
-  endAccessor="end"
-  style={{
-    height: "100%",
-    borderRadius: "10px",
-    marginTop: "10px",
-  }}
-  onSelectEvent={(event) => {
-    setSelectedEvent(event);
-    setShowDetailsModal(true);
-  }}
-  view={view}
-  onView={(newView) => setView(newView)}
-  date={date}
-  onNavigate={(newDate) => setDate(newDate)}
-/>
+            localizer={localizer}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            style={{
+              height: "100%",
+              borderRadius: "10px",
+              marginTop: "10px",
+            }}
+            onSelectEvent={(event) => {
+              setSelectedEvent(event);
+              setShowDetailsModal(true);
+            }}
+            view={view}
+            onView={(newView) => setView(newView)}
+            date={date}
+            onNavigate={(newDate) => setDate(newDate)}
+          />
 
-  
           {/* Modal: Dodawanie nowego wydarzenia */}
           {showModal && (
             <div className="modal-overlay">
@@ -233,7 +239,7 @@ const Schedules = () => {
               </div>
             </div>
           )}
-  
+
           {/* Modal: Szczegóły wydarzenia */}
           {showDetailsModal && selectedEvent && (
             <div className="modal-overlay">
@@ -258,7 +264,9 @@ const Schedules = () => {
                   <strong>End:</strong> {selectedEvent.end.toLocaleString()}
                 </p>
                 <button onClick={toggleAttendance}>
-                  {selectedEvent.isAttending ? "Cancel Attendance" : "Join Event"}
+                  {selectedEvent.isAttending
+                    ? "Cancel Attendance"
+                    : "Join Event"}
                 </button>
                 <p>
                   <strong>Attendees:</strong>
@@ -278,11 +286,11 @@ const Schedules = () => {
                 </ul>
 
                 <button
-        onClick={() => handleDeleteEvent(selectedEvent.id)}
-        style={{ backgroundColor: "red", color: "white" }}
-      >
-        Delete Event
-      </button>
+                  onClick={() => handleDeleteEvent(selectedEvent.id)}
+                  style={{ backgroundColor: "red", color: "white" }}
+                >
+                  Delete Event
+                </button>
               </div>
             </div>
           )}

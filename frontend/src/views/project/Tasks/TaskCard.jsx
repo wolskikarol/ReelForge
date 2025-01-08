@@ -12,7 +12,9 @@ const TaskCard = ({ task, projectUsers, onDelete, onEdit, onAssign }) => {
     }),
   }));
 
-  const assignedUser = projectUsers.find((user) => user.id === task.assigned_to);
+  const assignedUser = projectUsers.find(
+    (user) => user.id === task.assigned_to
+  );
 
   return (
     <div
@@ -22,19 +24,30 @@ const TaskCard = ({ task, projectUsers, onDelete, onEdit, onAssign }) => {
     >
       <div className="task-card-header">
         <strong>{task.title}</strong>
-        <p>Assigned to: {assignedUser ? assignedUser.full_name || assignedUser.email : "Unassigned"}</p>
+        <p>
+          Assigned to:{" "}
+          {assignedUser
+            ? assignedUser.full_name || assignedUser.email
+            : "Unassigned"}
+        </p>
       </div>
 
       {isExpanded && (
         <div className="task-card-expanded">
-          <p><strong>Description:</strong> {task.description}</p>
-          <p><strong>Status:</strong> {task.status}</p>
+          <p>
+            <strong>Description:</strong> {task.description}
+          </p>
+          <p>
+            <strong>Status:</strong> {task.status}
+          </p>
           <select
             onClick={(e) => e.stopPropagation()}
             onChange={(e) => onAssign(task.id, e.target.value)}
             defaultValue={task.assigned_to || ""}
           >
-            <option value="" disabled>Assign user</option>
+            <option value="" disabled>
+              Assign user
+            </option>
             {projectUsers.map((user) => (
               <option key={user.id} value={user.id}>
                 {user.full_name || user.email}

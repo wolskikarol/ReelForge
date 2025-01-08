@@ -30,7 +30,7 @@ const TaskBoard = () => {
           Authorization: `Bearer ${Cookies.get("access_token")}`,
         },
       })
-      .then((response) => setTasks(response.data.results))
+      .then((response) => setTasks(response.data))
       .catch((error) => console.error("Error fetching tasks:", error));
 
     axios

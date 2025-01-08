@@ -17,7 +17,7 @@ import { Doughnut, Bar } from "react-chartjs-2";
 import Header from "../../partials/Header";
 import Footer from "../../partials/Footer";
 import SidePanel from "../../partials/SidePanel";
-import "./css/Budget.css"
+import "./css/Budget.css";
 
 ChartJS.register(
   ArcElement,
@@ -29,16 +29,22 @@ ChartJS.register(
   Title
 );
 
-
 Modal.setAppElement("#root");
 
 const Expenses = () => {
   const { projectid } = useParams();
   const [expenses, setExpenses] = useState([]);
-  const [summary, setSummary] = useState({ total_expenses: 0, remaining_budget: 0 });
+  const [summary, setSummary] = useState({
+    total_expenses: 0,
+    remaining_budget: 0,
+  });
   const [plannedBudget, setPlannedBudget] = useState(null);
   const [newPlannedBudget, setNewPlannedBudget] = useState("");
-  const [newExpense, setNewExpense] = useState({ description: "", amount: "", category: "Other" });
+  const [newExpense, setNewExpense] = useState({
+    description: "",
+    amount: "",
+    category: "Other",
+  });
   const [filterCategory, setFilterCategory] = useState("");
   const [nextPage, setNextPage] = useState(null);
   const [prevPage, setPrevPage] = useState(null);
@@ -66,7 +72,9 @@ const Expenses = () => {
       .catch((error) => console.error("Error fetching budget:", error));
   };
 
-  const fetchExpenses = (url = `http://localhost:8000/api/v1/project/${projectid}/expenses/`) => {
+  const fetchExpenses = (
+    url = `http://localhost:8000/api/v1/project/${projectid}/expenses/`
+  ) => {
     if (filterCategory) {
       url += `?category=${filterCategory}`;
     }
@@ -124,185 +132,203 @@ const Expenses = () => {
 
   const handleDeleteExpense = (expenseId) => {
     axios
-      .delete(`http://localhost:8000/api/v1/project/${projectid}/expenses/${expenseId}/`, {
-        headers: { Authorization: `Bearer ${Cookies.get("access_token")}` },
-      })
+      .delete(
+        `http://localhost:8000/api/v1/project/${projectid}/expenses/${expenseId}/`,
+        {
+          headers: { Authorization: `Bearer ${Cookies.get("access_token")}` },
+        }
+      )
       .then(() => {
-        setExpenses((prevExpenses) => prevExpenses.filter((expense) => expense.id !== expenseId));
+        setExpenses((prevExpenses) =>
+          prevExpenses.filter((expense) => expense.id !== expenseId)
+        );
       })
       .catch((error) => console.error("Error deleting expense:", error));
   };
 
-  
-    const categoryData = expenses.reduce((acc, expense) => {
-      acc[expense.category] = (acc[expense.category] || 0) + parseFloat(expense.amount);
-      return acc;
-    }, {});
+  const categoryData = expenses.reduce((acc, expense) => {
+    acc[expense.category] =
+      (acc[expense.category] || 0) + parseFloat(expense.amount);
+    return acc;
+  }, {});
 
-    const doughnutData = {
-      labels: Object.keys(categoryData),
-      datasets: [
-        {
-          label: "Expenses by Category",
-          data: Object.values(categoryData),
-          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
-        },
-      ],
-    };
-  
-    const barData = {
-      labels: ["Planned Budget", "Total Expenses", "Remaining Budget"],
-      datasets: [
-        {
-          label: "Budget Overview",
-          data: [plannedBudget, summary.total_expenses, summary.remaining_budget],
-          backgroundColor: ["#36A2EB", "#FF6384", "#4BC0C0"],
-        },
-      ],
-    };
+  const doughnutData = {
+    labels: Object.keys(categoryData),
+    datasets: [
+      {
+        label: "Expenses by Category",
+        data: Object.values(categoryData),
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
+      },
+    ],
+  };
 
+  const barData = {
+    labels: ["Planned Budget", "Total Expenses", "Remaining Budget"],
+    datasets: [
+      {
+        label: "Budget Overview",
+        data: [plannedBudget, summary.total_expenses, summary.remaining_budget],
+        backgroundColor: ["#36A2EB", "#FF6384", "#4BC0C0"],
+      },
+    ],
+  };
 
   return (
-<div className="app-container">
-  <Header />
-  <div className="content-container">
-    <SidePanel />
-    <div className="main-content expenses-container">
-      <h2 className="expenses-header">Budget</h2>
+    <div className="app-container">
+      <Header />
+      <div className="content-container">
+        <SidePanel />
+        <div className="main-content expenses-container">
+          <h2 className="expenses-header">Budget</h2>
 
-      {/* Sekcja podsumowania budżetu */}
-      <div className="budget-summary">
-        <p>
-          <strong>Total Budget:</strong> {plannedBudget} PLN
-        </p>
-        <p>
-          <strong>Total Expenses:</strong> {summary.total_expenses} PLN
-        </p>
-        <p>
-          <strong>Remaining Budget:</strong> {summary.remaining_budget} PLN
-        </p>
-        <button onClick={() => setIsUpdateBudgetModalOpen(true)}>
-          Update Budget
-        </button>
-        <button onClick={() => setIsAddExpenseModalOpen(true)}>
-          Add Expense
-        </button>
-      </div>
-
-      {/* Przycisk pokazujący wykresy */}
-      <button
-        className="add-event-button"
-        onClick={() => setShowCharts(!showCharts)}
-      >
-        {showCharts ? "Hide Charts" : "Show Charts"}
-      </button>
-
-      {/* Sekcja wykresów */}
-      {showCharts && (
-        <>
-          <div className="chart-container">
-            <h3>Budget Overview</h3>
-            <Bar data={barData} />
-          </div>
-          <div className="chart-container">
-            <h3>Expenses by Category</h3>
-            <Doughnut data={doughnutData} />
-          </div>
-        </>
-      )}
-
-      {/* Sekcja wydatków */}
-      <h3>Expenses</h3>
-      <div>
-        <label htmlFor="filter-category">Filter by Category:</label>
-        <select
-          id="filter-category"
-          onChange={(e) => setFilterCategory(e.target.value)}
-          value={filterCategory}
-        >
-          <option value="">All Categories</option>
-          <option value="Equipment">Equipment</option>
-          <option value="Transport">Transport</option>
-          <option value="Labor">Labor</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-      <ul className="expenses-list">
-        {expenses.map((expense) => (
-          <li key={expense.id}>
-            <div>
-              <strong>{expense.description}</strong>: {expense.amount} PLN (
-              {expense.category})
-            </div>
-            <button onClick={() => handleDeleteExpense(expense.id)}>
-              Delete
+          {/* Sekcja podsumowania budżetu */}
+          <div className="budget-summary">
+            <p>
+              <strong>Total Budget:</strong> {plannedBudget} PLN
+            </p>
+            <p>
+              <strong>Total Expenses:</strong> {summary.total_expenses} PLN
+            </p>
+            <p>
+              <strong>Remaining Budget:</strong> {summary.remaining_budget} PLN
+            </p>
+            <button onClick={() => setIsUpdateBudgetModalOpen(true)}>
+              Update Budget
             </button>
-          </li>
-        ))}
-      </ul>
+            <button onClick={() => setIsAddExpenseModalOpen(true)}>
+              Add Expense
+            </button>
+          </div>
 
-      {/* Modal: Dodawanie wydatku */}
-      <Modal
-        isOpen={isAddExpenseModalOpen}
-        onRequestClose={() => setIsAddExpenseModalOpen(false)}
-        contentLabel="Add Expense Modal"
-        className="modal-content"
-        overlayClassName="modal-overlay"
-      >
-        <h2>Add Expense</h2>
-        <input
-          type="text"
-          placeholder="Description"
-          value={newExpense.description}
-          onChange={(e) =>
-            setNewExpense({ ...newExpense, description: e.target.value })
-          }
-        />
-        <input
-          type="number"
-          placeholder="Amount"
-          value={newExpense.amount}
-          onChange={(e) =>
-            setNewExpense({ ...newExpense, amount: e.target.value })
-          }
-        />
-        <select
-          onChange={(e) =>
-            setNewExpense({ ...newExpense, category: e.target.value })
-          }
-          value={newExpense.category}
-        >
-          <option value="Equipment">Equipment</option>
-          <option value="Transport">Transport</option>
-          <option value="Labor">Labor</option>
-          <option value="Other">Other</option>
-        </select>
-        <button onClick={handleAddExpense}>Add</button>
-        <button onClick={() => setIsAddExpenseModalOpen(false)}>Cancel</button>
-      </Modal>
+          {/* Przycisk pokazujący wykresy */}
+          <button
+            className="add-event-button"
+            onClick={() => setShowCharts(!showCharts)}
+          >
+            {showCharts ? "Hide Charts" : "Show Charts"}
+          </button>
 
-      {/* Modal: Aktualizacja budżetu */}
-      <Modal
-        isOpen={isUpdateBudgetModalOpen}
-        onRequestClose={() => setIsUpdateBudgetModalOpen(false)}
-        contentLabel="Update Budget Modal"
-        className="modal-content"
-        overlayClassName="modal-overlay"
-      >
-        <h2>Update Planned Budget</h2>
-        <input
-          type="number"
-          placeholder="New Planned Budget"
-          value={newPlannedBudget}
-          onChange={(e) => setNewPlannedBudget(e.target.value)}
-        />
-        <button onClick={handleUpdateBudget}>Update</button>
-        <button onClick={() => setIsUpdateBudgetModalOpen(false)}>Cancel</button>
-      </Modal>
+          {/* Sekcja wykresów */}
+          {showCharts && (
+            <>
+              <div className="chart-container">
+                <h3>Budget Overview</h3>
+                <Bar data={barData} />
+              </div>
+              <div className="chart-container">
+                <h3>Expenses by Category</h3>
+                <Doughnut data={doughnutData} />
+              </div>
+            </>
+          )}
+
+          {/* Sekcja wydatków */}
+          <h3>Expenses</h3>
+          <div>
+            <label htmlFor="filter-category">Filter by Category:</label>
+            <select
+              id="filter-category"
+              onChange={(e) => setFilterCategory(e.target.value)}
+              value={filterCategory}
+            >
+              <option value="">All Categories</option>
+              <option value="Equipment">Equipment</option>
+              <option value="Transport">Transport</option>
+              <option value="Labor">Labor</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <ul className="expenses-list">
+            {expenses.map((expense) => (
+              <li key={expense.id}>
+                <div>
+                  <strong>{expense.description}</strong>: {expense.amount} PLN (
+                  {expense.category})
+                </div>
+                <button onClick={() => handleDeleteExpense(expense.id)}>
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          {/* Przycisk obsługi paginacji */}
+          <div className="pagination-buttons">
+            {prevPage && (
+              <button onClick={() => fetchExpenses(prevPage)}>Previous</button>
+            )}
+            {nextPage && (
+              <button onClick={() => fetchExpenses(nextPage)}>Next</button>
+            )}
+          </div>
+
+          {/* Modal: Dodawanie wydatku */}
+          <Modal
+            isOpen={isAddExpenseModalOpen}
+            onRequestClose={() => setIsAddExpenseModalOpen(false)}
+            contentLabel="Add Expense Modal"
+            className="modal-content"
+            overlayClassName="modal-overlay"
+          >
+            <h2>Add Expense</h2>
+            <input
+              type="text"
+              placeholder="Description"
+              value={newExpense.description}
+              onChange={(e) =>
+                setNewExpense({ ...newExpense, description: e.target.value })
+              }
+            />
+            <input
+              type="number"
+              placeholder="Amount"
+              value={newExpense.amount}
+              onChange={(e) =>
+                setNewExpense({ ...newExpense, amount: e.target.value })
+              }
+            />
+            <select
+              onChange={(e) =>
+                setNewExpense({ ...newExpense, category: e.target.value })
+              }
+              value={newExpense.category}
+            >
+              <option value="Equipment">Equipment</option>
+              <option value="Transport">Transport</option>
+              <option value="Labor">Labor</option>
+              <option value="Other">Other</option>
+            </select>
+            <button onClick={handleAddExpense}>Add</button>
+            <button onClick={() => setIsAddExpenseModalOpen(false)}>
+              Cancel
+            </button>
+          </Modal>
+
+          {/* Modal: Aktualizacja budżetu */}
+          <Modal
+            isOpen={isUpdateBudgetModalOpen}
+            onRequestClose={() => setIsUpdateBudgetModalOpen(false)}
+            contentLabel="Update Budget Modal"
+            className="modal-content"
+            overlayClassName="modal-overlay"
+          >
+            <h2>Update Planned Budget</h2>
+            <input
+              type="number"
+              placeholder="New Planned Budget"
+              value={newPlannedBudget}
+              onChange={(e) => setNewPlannedBudget(e.target.value)}
+            />
+            <button onClick={handleUpdateBudget}>Update</button>
+            <button onClick={() => setIsUpdateBudgetModalOpen(false)}>
+              Cancel
+            </button>
+          </Modal>
+        </div>
+      </div>
+      <Footer />
     </div>
-  </div>
-  <Footer />
-</div>
   );
 };
 

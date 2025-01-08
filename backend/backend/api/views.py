@@ -321,6 +321,7 @@ class ShotDetailView(generics.RetrieveUpdateDestroyAPIView):
 class TaskListCreateView(generics.ListCreateAPIView):
     serializer_class = api_serializer.TaskSerializer
     permission_classes = [IsAuthenticated, IsAuthorOrProjectMember]
+    pagination_class = None 
 
     def get_queryset(self):
         project_id = self.kwargs.get('project_id')
@@ -391,6 +392,7 @@ class TaskAssignUserView(generics.UpdateAPIView):
 class TaskByStatusListView(generics.ListAPIView):
     serializer_class = api_serializer.TaskSerializer
     permission_classes = [IsAuthenticated, IsAuthorOrProjectMember]
+    pagination_class = None 
 
     def get_queryset(self):
         project_id = self.kwargs.get('project_id')
@@ -404,6 +406,7 @@ class TaskByStatusListView(generics.ListAPIView):
 class EventListCreateView(generics.ListCreateAPIView):
     serializer_class = api_serializer.EventSerializer
     permission_classes = [IsAuthenticated, IsAuthorOrMemberList]
+    pagination_class = None 
 
     def get_queryset(self):
         project_id = self.kwargs.get('project_id')
@@ -498,6 +501,7 @@ class ExpenseDetailView(generics.RetrieveDestroyAPIView):
 class StoryboardListCreateView(generics.ListCreateAPIView):
     serializer_class = api_serializer.StoryboardSerializer
     permission_classes = [IsAuthenticated, IsAuthorOrMemberList]
+    pagination_class = None
 
     def get_queryset(self):
         project_id = self.kwargs.get('project_id')

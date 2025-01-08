@@ -33,7 +33,7 @@ const Storyboards = () => {
         },
       })
       .then((response) => {
-        setStoryboards(response.data.results || []);
+        setStoryboards(response.data || []);
       })
       .catch((error) => console.error("Error fetching storyboards:", error));
   }, [projectid]);

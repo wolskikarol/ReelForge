@@ -20,11 +20,14 @@ const SidePanel = () => {
           return;
         }
 
-        const response = await axios.get(`http://127.0.0.1:8000/api/v1/project/${projectid}/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/v1/project/${projectid}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         setProjectName(response.data.title);
         setLoading(false);
@@ -39,31 +42,52 @@ const SidePanel = () => {
   }, [projectid]);
 
   if (loading) {
-    return <div className="sidepanel"><p>Loading project name...</p></div>;
+    return (
+      <div className="sidepanel">
+        <p>Loading project name...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="sidepanel"><p>{error}</p></div>;
+    return (
+      <div className="sidepanel">
+        <p>{error}</p>
+      </div>
+    );
   }
 
   return (
     <aside className="sidepanel">
       <div className="sidepanel-header">
-      <h2 
+        <h2
           className="clickable"
           onClick={() => navigate(`/project/${projectid}`)}
           style={{ cursor: "pointer" }}
         >
           {projectName}
-        </h2>      </div>
+        </h2>{" "}
+      </div>
       <nav className="sidepanel-nav">
         <ul>
-          <li><Link to={`/project/${projectid}/scripts`}>Scripts</Link></li>
-          <li><Link to={`/project/${projectid}/shot-lists`}>Shot Lists</Link></li>
-          <li><Link to={`/project/${projectid}/storyboards`}>Storyboards</Link></li>
-          <li><Link to={`/project/${projectid}/schedule`}>Schedules</Link></li>
-          <li><Link to={`/project/${projectid}/budget`}>Budget</Link></li>
-          <li><Link to={`/project/${projectid}/tasks`}>Tasks</Link></li>
+          <li>
+            <Link to={`/project/${projectid}/scripts`}>Scripts</Link>
+          </li>
+          <li>
+            <Link to={`/project/${projectid}/shot-lists`}>Shot Lists</Link>
+          </li>
+          <li>
+            <Link to={`/project/${projectid}/storyboards`}>Storyboards</Link>
+          </li>
+          <li>
+            <Link to={`/project/${projectid}/schedule`}>Schedules</Link>
+          </li>
+          <li>
+            <Link to={`/project/${projectid}/budget`}>Budget</Link>
+          </li>
+          <li>
+            <Link to={`/project/${projectid}/tasks`}>Tasks</Link>
+          </li>
         </ul>
       </nav>
     </aside>

@@ -3,7 +3,15 @@ import { useDrop } from "react-dnd";
 import TaskCard from "./TaskCard";
 import "./css/TaskColumn.css";
 
-const TaskColumn = ({ status, tasks, onDrop, onDelete, onEdit, onAssign, projectUsers }) => {
+const TaskColumn = ({
+  status,
+  tasks,
+  onDrop,
+  onDelete,
+  onEdit,
+  onAssign,
+  projectUsers,
+}) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "TASK",
     drop: (item) => onDrop(item, status),
@@ -13,10 +21,7 @@ const TaskColumn = ({ status, tasks, onDrop, onDelete, onEdit, onAssign, project
   }));
 
   return (
-    <div
-      ref={drop}
-      className={`task-column ${isOver ? "is-over" : ""}`}
-    >
+    <div ref={drop} className={`task-column ${isOver ? "is-over" : ""}`}>
       <h3>{status.toUpperCase()}</h3>
       {tasks.map((task) => (
         <TaskCard

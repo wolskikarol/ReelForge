@@ -33,7 +33,10 @@ const ProjectScriptsPage = () => {
             className="custom-modal"
             overlayClassName="custom-overlay"
           >
-            <AddScriptForm onScriptAdded={handleScriptAdded} onClose={closeModal} />
+            <AddScriptForm
+              onScriptAdded={handleScriptAdded}
+              onClose={closeModal}
+            />
           </Modal>
           <Scripts key={refreshList} />
         </div>
